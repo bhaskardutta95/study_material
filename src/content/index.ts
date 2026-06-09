@@ -10,9 +10,14 @@
 import type { Subject } from './types';
 import dbms from './dbms.json';
 import os from './os.json';
+import se from './se.json';
 
 // `as Subject` validates each JSON file against the schema at build time.
-export const subjects: Subject[] = [dbms as Subject, os as Subject];
+export const subjects: Subject[] = [
+  dbms as Subject,
+  os as Subject,
+  se as Subject,
+];
 
 /** Look up a single subject by its URL id. Returns undefined if not found. */
 export function getSubject(id: string | undefined): Subject | undefined {

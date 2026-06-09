@@ -1,0 +1,375 @@
+{
+  "id": "se",
+  "title": "Software Engineering",
+  "code": "SE",
+  "icon": "🛠️",
+  "summary": "How real software is planned, designed, built, tested and maintained — process models, metrics, design, testing and quality.",
+  "accent": "#8b5cf6",
+  "modules": [
+    {
+      "id": "m1",
+      "name": "Introduction",
+      "importance": "normal",
+      "topics": [
+        {
+          "id": "generic-view",
+          "name": "A Generic View of Software Engineering",
+          "description": "Applying disciplined, engineering-style methods to build software that is reliable and maintainable.",
+          "study": "Software engineering is the systematic approach to developing, operating and maintaining software. It layers a process (the framework of activities), methods (how to do each activity) and tools (automation) on a quality focus — so software is built predictably rather than hacked together.",
+          "realWorld": "Building an app like a banking system isn't just coding — it needs requirements, design, testing and maintenance plans. Software engineering is the discipline that keeps a 50-person, multi-year project from descending into chaos."
+        },
+        {
+          "id": "sdlc-phases",
+          "name": "Phases in Software Development",
+          "description": "The software development life cycle: requirements, design, implementation, testing, deployment, maintenance.",
+          "study": "Most projects pass through the same phases: gather and analyse requirements, design the solution, implement (code) it, test it, deploy to users, then maintain and improve it. A process model decides how these phases are ordered and repeated.",
+          "realWorld": "Releasing a mobile game follows these phases: decide features (requirements), design levels and architecture, build it, QA-test, ship to the app store, then patch and add content (maintenance)."
+        },
+        {
+          "id": "waterfall",
+          "name": "Linear Sequential (Waterfall) Model",
+          "description": "Phases done strictly one after another, each finished before the next begins.",
+          "study": "The waterfall model flows downward through requirements → design → implementation → testing → maintenance, with each phase completed before the next starts. It's simple and easy to manage, but inflexible: requirements must be known up front and late changes are very costly.",
+          "realWorld": "Waterfall suits fixed, well-understood projects like building software for a government tender where the full specification is locked before work begins — but it struggles when customers change their minds mid-build."
+        },
+        {
+          "id": "prototype",
+          "name": "Prototype Model",
+          "description": "Build a quick, throwaway version first to clarify unclear requirements.",
+          "study": "When requirements are fuzzy, you build a rough prototype, show it to the user, gather feedback, and refine — repeating until the real requirements are clear. The prototype is often discarded and the final system built properly afterwards.",
+          "realWorld": "A startup mocks up a clickable demo of its app to show investors and test users. The feedback shapes the real product; the demo itself is thrown away."
+        },
+        {
+          "id": "evolutionary",
+          "name": "Evolutionary Model (Incremental & Spiral)",
+          "description": "Deliver the system in growing increments, or iterate in risk-driven loops.",
+          "study": "Evolutionary models build software in stages. The incremental model delivers usable pieces one after another, adding features each release. The spiral model repeats loops of plan → risk-analysis → build → evaluate, tackling the biggest risks first — ideal for large, high-risk projects.",
+          "realWorld": "A product like an OS ships v1 with core features, then v2, v3 add more — that's incremental. NASA-style mission software, where a mistake is catastrophic, uses spiral to analyse risk at every loop."
+        },
+        {
+          "id": "specialized-process",
+          "name": "Specialized Process Models",
+          "description": "Component-Based Development and Aspect-Oriented Software Development.",
+          "study": "Component-Based Development assembles systems mostly from existing, reusable components rather than writing everything from scratch. Aspect-Oriented Development separates cross-cutting concerns (like logging or security) that would otherwise be scattered across many modules into their own units.",
+          "realWorld": "Using ready-made libraries for payments, maps and auth instead of building them is component-based development. A logging 'aspect' that automatically records every function call is aspect-oriented."
+        },
+        {
+          "id": "agile",
+          "name": "Agile Process",
+          "description": "Short iterations, working software, and responding to change over rigid plans.",
+          "study": "Agile values working software, customer collaboration and responding to change over heavy documentation and fixed plans. Work is done in short iterations (sprints) producing usable software each time. It relies heavily on the human factor — small, communicating, self-organising teams.",
+          "realWorld": "A web team running two-week sprints, demoing to the client every two weeks and re-prioritising the backlog, is doing Agile/Scrum — the opposite of locking the whole spec up front."
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "name": "Project Metrics",
+      "importance": "normal",
+      "topics": [
+        {
+          "id": "software-measurement",
+          "name": "Software Measurement",
+          "description": "Sizing software by lines of code, function points, or object-oriented and web metrics.",
+          "study": "Metrics quantify software so it can be estimated and tracked. Size-oriented metrics count lines of code (LOC/KLOC). Function-oriented metrics (Function Points) measure delivered functionality independent of language. Extended Function Points, object-oriented metrics and web-application metrics adapt this to modern systems.",
+          "code": "Size-oriented:   productivity = KLOC / person-month\nFunction Point:  FP = count_total × (0.65 + 0.01 × Σ Fi)\n   where count_total weights inputs, outputs, inquiries,\n   files and interfaces; Fi are 14 complexity adjustments.",
+          "codeLang": "text"
+        },
+        {
+          "id": "quality-metrics",
+          "name": "Metrics for Software Quality",
+          "description": "Measuring quality, including Defect Removal Efficiency (DRE).",
+          "study": "Quality metrics track how defect-free the software is. Defect Removal Efficiency measures how many defects were caught before release versus those found by users — higher is better. Correctness, maintainability and reliability are also measured.",
+          "code": "DRE = E / (E + D)\n\n  E = errors found BEFORE delivery\n  D = defects found AFTER delivery (by users)\n\n  Ideal DRE = 1.0  (every defect caught in-house)",
+          "codeLang": "text"
+        },
+        {
+          "id": "integrate-metrics",
+          "name": "Integrating Metrics (Baseline)",
+          "description": "Collecting metrics over past projects to establish a baseline for future estimates.",
+          "study": "Metrics are only useful when integrated into the process. By collecting size, effort and defect data from completed projects, a team establishes a baseline of historical averages, which it then uses to estimate and benchmark new projects more accurately.",
+          "realWorld": "A company that records 'our past projects average 12 defects per KLOC' can immediately flag a new module reporting 40 — the baseline turns raw numbers into early-warning signals."
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "name": "Object Oriented Concepts",
+      "importance": "normal",
+      "topics": [
+        {
+          "id": "oo-basics",
+          "name": "Classes, Objects, Attributes & Methods",
+          "description": "The core building blocks of object-oriented software.",
+          "study": "A class is a blueprint; an object is an instance of it. Attributes are an object's data; operations/methods are what it can do; services are the behaviours it offers others. Objects communicate by sending messages (calling each other's methods).",
+          "code": "class BankAccount {        // class = blueprint\n    balance                 // attribute (data)\n    deposit(amount)         // method (operation)\n    withdraw(amount)\n}\n\nacc = new BankAccount()    // object (instance)\nacc.deposit(500)           // message sent to the object",
+          "codeLang": "text"
+        },
+        {
+          "id": "object-model-elements",
+          "name": "Identifying Elements of an Object Model",
+          "description": "Finding the right classes, objects and operations from a problem description.",
+          "study": "To build an object model you scan the problem statement: nouns suggest candidate classes/objects, and verbs suggest operations. You then keep the meaningful ones, discard duplicates and attributes-masquerading-as-classes, and define each class's responsibilities.",
+          "realWorld": "Designing a library system, the sentence 'a member borrows a book' surfaces classes Member and Book and an operation borrow() — the grammar of the requirements literally hints at the design."
+        },
+        {
+          "id": "ooad",
+          "name": "Object Oriented Analysis & Design",
+          "description": "Use cases and CRC (Class-Responsibility-Collaborator) modelling.",
+          "study": "OOAD turns requirements into an object design. Use cases describe how actors interact with the system to achieve goals. CRC cards capture, per class, its Responsibilities (what it knows/does) and Collaborators (other classes it works with) — a simple, team-friendly way to design responsibilities.",
+          "realWorld": "On an e-commerce project, a use case 'Customer places order' plus CRC cards for Cart (responsible for totals, collaborates with Product and Payment) gives the team a shared design before any code is written."
+        },
+        {
+          "id": "object-relationship",
+          "name": "Object-Relationship Model",
+          "description": "Showing how classes are connected and how many of each relate.",
+          "study": "The object-relationship model captures the connections between classes — associations, aggregations and the multiplicity (one-to-one, one-to-many) between them. It's the object-oriented cousin of the ER diagram, defining how objects link and depend on each other.",
+          "realWorld": "In a school system: one Teacher relates to many Students, and a Course aggregates many Lessons. Mapping these links upfront prevents missing or broken relationships later in the code."
+        }
+      ]
+    },
+    {
+      "id": "m4",
+      "name": "Project Planning",
+      "importance": "most-important",
+      "topics": [
+        {
+          "id": "software-scope",
+          "name": "Software Scope & Feasibility",
+          "description": "Defining what the project will (and won't) do, and whether it's viable.",
+          "study": "Planning starts by fixing the software scope — the functions, data, performance and constraints the system must meet. Feasibility then checks whether it's worth doing: technically possible, economically justified and operationally practical. A clear scope prevents 'scope creep' later.",
+          "realWorld": "Before committing to build a delivery app, a company checks: can our team build it (technical), will it pay off (economic), will drivers actually use it (operational)? A 'no' on any axis stops a doomed project early."
+        },
+        {
+          "id": "resource-identification",
+          "name": "Resource Identification",
+          "description": "Human resources and reusable software resources needed for the project.",
+          "study": "Projects need three kinds of resources: people (with the right skills and roles), reusable software components (libraries, frameworks, past code), and environment/tools (hardware, software). Identifying them early makes estimates realistic.",
+          "realWorld": "Planning a new feature, a lead notes: we need two backend devs and a designer (human), can reuse our existing auth and payment modules (reusable software), and need a staging server (environment)."
+        },
+        {
+          "id": "cocomo",
+          "name": "Empirical Estimation (COCOMO)",
+          "description": "Estimating effort and time from project size using formulas.",
+          "study": "COCOMO (Constructive Cost Model) estimates effort and schedule from the projected size in KLOC, using constants that depend on project type (organic = simple/small, semi-detached = medium, embedded = complex). It gives a defensible, formula-based estimate instead of a guess.",
+          "code": "Basic COCOMO:\n  Effort  E = a × (KLOC)^b      (person-months)\n  Time    D = c × (E)^d         (months)\n\n  Organic:        a=2.4 b=1.05 c=2.5 d=0.38\n  Semi-detached:  a=3.0 b=1.12\n  Embedded:       a=3.6 b=1.20",
+          "codeLang": "text"
+        },
+        {
+          "id": "estimation-variants",
+          "name": "Estimation for OO, Agile & Web Projects",
+          "description": "Adapting estimation to object-oriented, agile and web work.",
+          "study": "Different project styles use different estimation bases. Object-oriented projects count classes and use cases. Agile projects estimate in story points and velocity (work completed per sprint). Web-application projects estimate from pages, functions and content. Each tailors estimation to what it actually produces.",
+          "realWorld": "An Agile team that historically finishes ~30 story points per two-week sprint can forecast that a 120-point backlog takes about four sprints — estimation grounded in their measured velocity."
+        },
+        {
+          "id": "team-structure",
+          "name": "Team Structure",
+          "description": "How the project team is organised to communicate and decide.",
+          "study": "Team organisation affects communication and speed. Common structures: democratic/decentralised (shared decisions, good for hard problems), controlled centralised (a lead decides, good for simple/large work), and controlled decentralised (a mix). The right structure depends on project size, difficulty and duration.",
+          "realWorld": "A small research-heavy team works best democratically (everyone weighs in), while a large, deadline-driven product team often needs a clear tech lead making the calls — same people, very different productivity."
+        },
+        {
+          "id": "project-scheduling",
+          "name": "Project Scheduling",
+          "description": "Laying tasks out over time with timeline (Gantt) charts and tracking progress.",
+          "study": "Scheduling breaks the project into tasks, assigns people and time, and orders them by dependency. Time-line (Gantt) charts visualise tasks against a calendar; tracking compares actual progress to the plan so slippage is caught early. WebApp projects schedule increments of pages/features.",
+          "realWorld": "A Gantt chart in a tool like Jira or MS Project shows each task as a bar across weeks; when a bar slips past today's date line, the manager sees the delay immediately and re-plans."
+        },
+        {
+          "id": "make-buy",
+          "name": "Make / Buy Decision",
+          "description": "Choosing to build a component in-house or buy/reuse it — via a decision tree.",
+          "study": "For each major component you decide whether to build it, buy it, reuse existing code, or contract it out. A decision tree weighs each option's cost against its probability of success, and the path with the lowest expected cost wins.",
+          "code": "Decision tree (expected cost = Σ cost × probability):\n\n        ┌─ build  → simple  $380k (p=.30)\n  system┤          complex $450k (p=.70)\n        └─ buy    → as-is   $210k (p=.40)\n                    modify  $400k (p=.60)\nPick the branch with the lowest expected cost.",
+          "codeLang": "text"
+        },
+        {
+          "id": "project-monitoring",
+          "name": "Project Monitoring Plan",
+          "description": "Tracking effort, cost and schedule via timesheets, reviews and milestone graphs.",
+          "study": "Monitoring keeps the project on course after planning. Timesheets record where effort goes, reviews check work quality at checkpoints, and a cost-schedule-milestone graph plots planned vs actual cost and progress over time so deviations are visible.",
+          "realWorld": "A weekly status report showing 'planned 60% done / 40% budget spent, actually 45% done / 55% spent' instantly flags that the project is behind and over budget — the point of monitoring."
+        },
+        {
+          "id": "risk-management",
+          "name": "Risk Management",
+          "description": "Identifying, prioritising, mitigating and monitoring project risks.",
+          "study": "Risk management deals with what could go wrong. You identify risks, prioritise them by probability × impact, plan mitigation (how to reduce or avoid them), and monitor them throughout. Proactive risk management prevents small problems from becoming project-killers.",
+          "realWorld": "A team flags 'key developer might leave' as high risk and mitigates by documenting their work and cross-training a teammate — so the project survives if that person actually does quit."
+        }
+      ]
+    },
+    {
+      "id": "m5",
+      "name": "Software Architecture",
+      "importance": "normal",
+      "topics": [
+        {
+          "id": "architecture-structure",
+          "name": "Architecture: Fan-out & Fan-in",
+          "description": "How control is distributed across modules in the program structure.",
+          "study": "Software architecture is the overall module structure. Fan-out is how many modules a given module directly controls (calls); fan-in is how many modules call it. High fan-out means a module does too much coordination; high fan-in means a module is highly reused — usually a good sign of a well-factored utility.",
+          "realWorld": "A 'utility/format date' function called from 50 places has high fan-in (great reuse). A 'main controller' that directly drives 30 modules has high fan-out — often a sign it should delegate more."
+        },
+        {
+          "id": "structural-partitioning",
+          "name": "Structural Partitioning",
+          "description": "Splitting the architecture horizontally and vertically.",
+          "study": "Partitioning organises the module hierarchy. Horizontal partitioning separates major functions into independent branches (e.g. input, process, output), easing testing and change. Vertical partitioning ('factoring') puts decision-making at the top and the actual work lower down, so changes to control logic don't ripple into worker modules.",
+          "realWorld": "An app split into clear 'input handling', 'business logic' and 'reporting' branches (horizontal) with a thin top-level controller delegating downward (vertical) is far easier to modify than one giant tangled module."
+        },
+        {
+          "id": "coupling-cohesion",
+          "name": "Functional Independence: Coupling & Cohesion",
+          "description": "Aim for low coupling between modules and high cohesion within them.",
+          "study": "Good design maximises functional independence. Cohesion measures how focused a single module is — high cohesion (does one well-defined job) is good. Coupling measures how dependent modules are on each other — low coupling (few, simple connections) is good. Together they make modules easy to understand, test and change.",
+          "realWorld": "A 'sendEmail' module that only sends email (high cohesion) and just takes a message as input (low coupling) can be reused and changed safely. A module that does email + billing + logging, reaching into others' data, is the opposite — fragile."
+        },
+        {
+          "id": "modularity-heuristics",
+          "name": "Design Heuristics for Modularity",
+          "description": "Rules of thumb for refining a design into effective modules.",
+          "study": "After a first-cut architecture, heuristics improve it: reduce excessive fan-out and aim for fan-in as depth increases, keep a module's scope of effect within its scope of control, reduce interface complexity, and make modules predictable (no surprising side effects). The goal is maintainable, independent modules.",
+          "realWorld": "Refactoring a 500-line function into small, single-purpose functions with clean inputs/outputs is applying these heuristics — the behaviour is unchanged but the design is now modular and maintainable."
+        }
+      ]
+    },
+    {
+      "id": "m6",
+      "name": "Design",
+      "importance": "important",
+      "topics": [
+        {
+          "id": "data-architectural-design",
+          "name": "Data & Architectural Design",
+          "description": "Designing data structures and mapping data flow into program structure.",
+          "study": "Data design defines the data structures and databases the system uses. Architectural design derives the program's module structure, often by mapping a Data Flow Diagram: transform flow maps to an input-process-output structure, while transaction flow maps to a dispatcher that routes to action paths.",
+          "realWorld": "An order-processing DFD with a clear 'incoming order → validate → fulfil → invoice' pipeline maps to transform-flow modules; a menu screen that branches to different actions maps to a transaction-flow dispatcher."
+        },
+        {
+          "id": "component-design",
+          "name": "Component-Level Design",
+          "description": "Designing class-based components, including for web applications.",
+          "study": "Component-level design specifies the internal logic and data of each module/class — its operations, interfaces and algorithms — so it can be coded directly. For web applications, components also cover content and navigation. Good components have clear interfaces and hide their internals.",
+          "realWorld": "Designing a 'PaymentProcessor' component means defining exactly its methods (charge, refund), inputs/outputs and error handling before coding — so two developers can build it and its callers in parallel without surprises."
+        },
+        {
+          "id": "ui-design",
+          "name": "User Interface Design",
+          "description": "Designing usable interfaces: reduce memory load, stay consistent, follow patterns.",
+          "study": "UI design follows golden rules: reduce the user's memory load (show options rather than make them recall), keep the interface consistent, and put the user in control. The process moves through interface analysis, design steps and reusable UI design patterns, validated with users.",
+          "realWorld": "Autocomplete in a search box reduces memory load (you recognise instead of recall); using the same icon and placement for 'save' across every screen is consistency — both are these UI principles in everyday apps."
+        }
+      ]
+    },
+    {
+      "id": "m7",
+      "name": "Software Testing",
+      "importance": "most-important",
+      "topics": [
+        {
+          "id": "testing-objectives",
+          "name": "Testing Objectives & Principles",
+          "description": "Testing aims to find errors, not to prove correctness.",
+          "study": "A good test is one that finds an as-yet-undiscovered error. Testing cannot prove software is bug-free, only reveal defects. Key principles: trace tests to requirements, plan tests early, and remember the Pareto rule — most defects cluster in a few modules, so focus there.",
+          "realWorld": "A tester who tries to break the login (wrong password, empty fields, SQL in the box) rather than just confirm a correct login works is following the 'find errors' objective — that's where real bugs hide."
+        },
+        {
+          "id": "unit-integration",
+          "name": "Unit & Integration Testing",
+          "description": "Test each module in isolation, then test them working together.",
+          "study": "Unit testing checks a single module/function in isolation using stubs and drivers. Integration testing then combines modules and tests their interfaces — top-down (start from the main module), bottom-up (start from leaf modules), or sandwich (both). It catches errors that only appear when modules interact.",
+          "code": "// Unit test: one function, in isolation\ntest('add(2,3) returns 5', () => {\n  expect(add(2, 3)).toBe(5);\n});\n\n// Integration test: modules together\ntest('checkout charges card and creates order', () => {\n  const order = checkout(cart, card);\n  expect(order.status).toBe('PAID');\n});",
+          "codeLang": "text"
+        },
+        {
+          "id": "path-testing",
+          "name": "Path Testing & Cyclomatic Complexity",
+          "description": "Use the control-flow graph to find independent paths to test.",
+          "study": "Basis-path (white-box) testing derives the minimum set of independent paths through a program from its control-flow graph. Cyclomatic complexity V(G) gives that number — it's both a complexity metric and the count of test cases needed for full path coverage. Lower complexity means simpler, more testable code.",
+          "code": "Cyclomatic complexity (control-flow graph):\n  V(G) = E − N + 2      (E = edges, N = nodes)\n  V(G) = P + 1          (P = predicate/decision nodes)\n\n  V(G) also = number of independent paths to test.\n  e.g. 3 if-conditions → V(G) = 3 + 1 = 4 test paths",
+          "codeLang": "text"
+        },
+        {
+          "id": "oo-web-testing",
+          "name": "Testing OO & Web Applications",
+          "description": "Strategies tailored to object-oriented and web software.",
+          "study": "Object-oriented testing tests at the class level (every operation), then thread/use-based integration, because inheritance and polymorphism create new error paths. Web-application testing adds content, navigation, configuration (browsers/devices), performance and security testing — a web app has many more interacting surfaces.",
+          "realWorld": "Testing a website means checking it on Chrome, Safari and mobile (configuration), that every link works (navigation), and that it survives a traffic spike (performance) — concerns a simple console program never has."
+        },
+        {
+          "id": "validation-system-testing",
+          "name": "Validation & System Testing",
+          "description": "Validation (right product) plus recovery, security, stress and performance testing.",
+          "study": "Validation testing confirms the software meets the customer's actual requirements (did we build the right thing?). System testing exercises the whole integrated system in its environment: recovery testing (does it recover from crashes?), security testing (can it be breached?), stress testing (does it survive overload?), and performance testing (is it fast enough?).",
+          "realWorld": "Before launch, a banking app is hammered with thousands of fake users (stress), pen-tested for vulnerabilities (security), and crash-restarted to check data survives (recovery) — all system testing beyond 'does the feature work'."
+        }
+      ]
+    },
+    {
+      "id": "m8",
+      "name": "Quality Management",
+      "importance": "important",
+      "topics": [
+        {
+          "id": "software-quality",
+          "name": "Defining Software Quality",
+          "description": "Conformance to requirements, standards, and implicit expectations.",
+          "study": "Software quality is conformance to explicit functional and performance requirements, explicit documented standards, and the implicit characteristics expected of professional software (like being usable and maintainable). Quality is designed in, not tested in afterwards.",
+          "realWorld": "An app can pass every listed feature test yet feel 'low quality' if it's slow and confusing — those unstated, implicit expectations are part of quality too."
+        },
+        {
+          "id": "quality-factors",
+          "name": "McCall's & ISO 9126 Quality Factors",
+          "description": "Standard models that break 'quality' into measurable factors.",
+          "study": "Quality models organise quality into factors. McCall's model groups them into product operation (correctness, reliability, efficiency, integrity, usability), revision (maintainability, flexibility, testability) and transition (portability, reusability, interoperability). ISO 9126 defines six characteristics: functionality, reliability, usability, efficiency, maintainability and portability.",
+          "realWorld": "When a team argues 'is this good software?', these factors turn the vague question into concrete ones: is it reliable, usable, maintainable, portable? — each can be measured and improved."
+        },
+        {
+          "id": "quality-control-assurance",
+          "name": "Quality Control & Assurance (SQA)",
+          "description": "QC inspects products; QA improves the process that makes them.",
+          "study": "Quality Control (QC) is the inspection, review and testing of work products to find defects. Quality Assurance (QA) is the broader set of planned activities — standards, audits, reviews, metrics — that ensure the development process itself produces quality. SQA has defined goals, tasks and metrics.",
+          "realWorld": "QC is catching bugs in a code review or test run (checking the product). QA is mandating that all code must be reviewed and have tests (fixing the process so fewer bugs appear at all)."
+        },
+        {
+          "id": "six-sigma",
+          "name": "Six Sigma for Software",
+          "description": "A data-driven methodology to reduce defects toward near-zero.",
+          "study": "Six Sigma is a statistical, data-driven approach to minimise defects (targeting ~3.4 defects per million opportunities). For software it uses the DMAIC cycle — Define, Measure, Analyse, Improve, Control — to systematically find and remove the causes of defects in the process.",
+          "realWorld": "A team noticing repeated production outages applies DMAIC: define the problem, measure how often, analyse root causes, improve the deployment process, and control it with monitoring — driving defects steadily down."
+        }
+      ]
+    },
+    {
+      "id": "m9",
+      "name": "Software Configuration Management",
+      "importance": "normal",
+      "topics": [
+        {
+          "id": "scm-elements",
+          "name": "Elements of SCM: Baselines & SCIs",
+          "description": "Managing the items that make up software and the baselines you freeze.",
+          "study": "Software Configuration Management controls change to all the artifacts of a project. Software Configuration Items (SCIs) are the things under control — code, documents, data, test cases. A baseline is a reviewed, frozen milestone version that can only change through formal change control, giving everyone a stable reference point.",
+          "realWorld": "When a team tags 'release-1.0' and only allows changes through approved pull requests afterward, that tag is a baseline and each tracked file is an SCI — so no one can silently alter the released version."
+        },
+        {
+          "id": "scm-processes",
+          "name": "SCM Processes",
+          "description": "Version control, change control, configuration audit and status reporting.",
+          "study": "SCM runs four processes. Version control tracks and stores every revision so you can compare or roll back. Change control reviews and approves proposed changes before they're applied. Configuration audit verifies that changes were done correctly. Status reporting tells everyone what changed, when and why.",
+          "code": "# Version control (git) in practice\ngit checkout -b fix/login-bug   # branch for a change\ngit commit -m \"Fix null check\"   # record a revision\ngit revert <hash>               # roll back safely\ngit tag v1.2.0                  # freeze a baseline",
+          "codeLang": "text"
+        },
+        {
+          "id": "scm-web",
+          "name": "SCM for Web Applications",
+          "description": "Managing content and rapid change in web apps.",
+          "study": "Web applications change constantly and include content as well as code, so SCM extends to WebApp configuration objects (pages, scripts, media), content management (who can publish what), and change management tuned for frequent, fast updates without breaking the live site.",
+          "realWorld": "A news site uses a CMS where editors publish articles (content management) while developers deploy code separately — both under version control — so a typo fix doesn't require redeploying the whole application."
+        }
+      ]
+    }
+  ]
+}
