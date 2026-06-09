@@ -1,0 +1,408 @@
+{
+  "id": "dbms",
+  "title": "Database Management Systems",
+  "code": "DBMS",
+  "icon": "🗄️",
+  "summary": "How databases store, query and protect data — ER design, SQL, normalization, indexing and transactions.",
+  "accent": "#3b82f6",
+  "modules": [
+    {
+      "id": "m1",
+      "name": "Introduction to DBMS",
+      "importance": "normal",
+      "topics": [
+        {
+          "id": "what-is-dbms",
+          "name": "What is a DBMS?",
+          "description": "Software that stores, organises and retrieves large amounts of data efficiently and safely.",
+          "study": "A DBMS sits between your application and the raw data files. It gives you a language to define the data (DDL), a language to query and change it (DML), and built-in services for security, concurrency and crash recovery — so you never touch files directly. Examples: MySQL, Oracle, PostgreSQL, SQL Server.",
+          "realWorld": "Think of a DBMS as a super-organised digital filing cabinet with a smart assistant. You just say 'give me all students who scored above 80' and it fetches them instantly, stops anyone corrupting the files, and keeps backups."
+        },
+        {
+          "id": "advantages",
+          "name": "Advantages of DBMS",
+          "description": "Less duplication, enforced consistency, safe sharing, security, backup/recovery and data independence.",
+          "study": "Data is stored once (controlled redundancy), constraints keep it valid, and many users can read/write the same data at the same time safely. Access is restricted per user, crashes auto-recover, and storage details can change without rewriting apps.",
+          "realWorld": "A bank stores each customer's balance in one place. Whether checked on a mobile app, an ATM, or at a branch, all three read the same value — that single source of truth is exactly what a DBMS guarantees."
+        },
+        {
+          "id": "dbms-vs-file",
+          "name": "DBMS vs File System",
+          "description": "Databases fix the redundancy, consistency and concurrency problems that flat files create.",
+          "study": "Old flat-file systems duplicated data across files, needed custom code for every query, had no safe multi-user access and no real recovery. A DBMS stores data once, queries with simple SQL, handles concurrency with locks/transactions, and offers automatic backup plus logical and physical data independence.",
+          "realWorld": "A spreadsheet emailed around an office is the 'file system' problem: ten copies, all slightly different. Moving everyone onto one shared database is the DBMS fix — one copy, always current."
+        },
+        {
+          "id": "three-schema",
+          "name": "Three-Schema Architecture",
+          "description": "ANSI/SPARC's three levels — external (views), conceptual (logical), internal (physical).",
+          "study": "The internal level describes how data is physically stored (files, indexes, blocks). The conceptual level describes what data exists and how it relates (tables, columns, constraints). The external level gives each user a tailored view. Separating them means a change at one level doesn't disturb the others.",
+          "realWorld": "A restaurant: customers (external) see a menu, the kitchen (conceptual) knows the recipes, the storeroom (internal) knows where everything is kept. Rearranging the storeroom never changes the menu — that separation is the whole point."
+        },
+        {
+          "id": "data-independence",
+          "name": "Data Abstraction & Independence",
+          "description": "The ability to change the schema at one level without altering the level above it.",
+          "study": "Logical data independence means you can change the conceptual schema (e.g. add a column) without breaking user views or applications. Physical data independence means you can change storage (add an index, change file layout) without changing the conceptual schema.",
+          "realWorld": "Adding a new index to speed up a website query is physical independence in action — the app code and the data model stay exactly the same; only the hidden storage changed."
+        },
+        {
+          "id": "data-models",
+          "name": "Data Models",
+          "description": "Concepts used to describe a database's structure — relational, ER, hierarchical, network, object.",
+          "study": "Hierarchical models store data as a tree (fast but rigid); network models as a graph (a record can have many parents); the relational model uses tables of rows and columns and dominates today; the ER model is a high-level design model of entities and relationships; object-oriented models store data as objects.",
+          "realWorld": "A company org-chart is a hierarchical model; your social network's 'friends' graph is a network model; almost every business app you use (banking, e-commerce) runs on the relational model."
+        },
+        {
+          "id": "dba",
+          "name": "Responsibilities of a DBA",
+          "description": "The person/team that defines the schema, controls access, and keeps the database healthy.",
+          "study": "A DBA defines and modifies the schema and storage structures, grants and revokes user permissions, runs routine backups and monitoring, tunes performance with indexes and query changes, and ensures recovery after failures. Key exam point: the DBA is a person, not software.",
+          "realWorld": "When a company's reporting query suddenly runs slow, the DBA is the person who adds the right index, schedules the nightly backup, and decides who is allowed to see salary data."
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "name": "ER Model",
+      "importance": "important",
+      "topics": [
+        {
+          "id": "entity-attribute",
+          "name": "Entity, Attribute & Entity Set",
+          "description": "An entity is a real-world object; attributes describe it; an entity set is the whole group.",
+          "study": "An entity is a noun you store information about (a student, a car, a book). Attributes are its details (name, colour, price). An entity set is the full collection of similar entities, e.g. all STUDENTS. In ER diagrams, rectangles are entities and ovals are attributes.",
+          "realWorld": "In an online store, 'Product' is an entity set, a specific iPhone is an entity, and price/colour/SKU are its attributes — exactly the rows and columns you'd see in the products table."
+        },
+        {
+          "id": "attribute-types",
+          "name": "Types of Attributes",
+          "description": "Simple, composite, single-valued, multivalued, derived and key attributes.",
+          "study": "Simple = cannot be split (Age). Composite = splits into parts (Name → First + Last). Single-valued = one value (DOB). Multivalued = many values (phone numbers). Derived = computed from another (Age from DOB). Key = uniquely identifies the entity (RollNo).",
+          "realWorld": "On a sign-up form: your full name is composite, your date of birth is single-valued, your list of phone numbers is multivalued, and your displayed 'age' is derived from the birth date."
+        },
+        {
+          "id": "strong-weak",
+          "name": "Strong vs Weak Entity",
+          "description": "A strong entity has its own key; a weak entity is identified only via its owner.",
+          "study": "A strong entity exists independently and has its own key (EMPLOYEE with EmpID). A weak entity has no key of its own — it depends on an owner entity and is identified by a partial key plus the owner's key. Shown with a double rectangle and an identifying relationship.",
+          "realWorld": "A hotel room number is weak: 'Room 101' means nothing alone — it exists in many hotels. Only 'Hotel Taj + Room 101' is unique. The room (weak) needs the hotel (strong) to be identified."
+        },
+        {
+          "id": "cardinality",
+          "name": "Cardinality Mapping",
+          "description": "Relationship ratios: one-to-one, one-to-many, many-to-one, many-to-many.",
+          "study": "1:1 — each side relates to at most one other (person ↔ passport). 1:N — one relates to many (department ↔ employees). N:1 — the reverse. M:N — many relate to many (students ↔ courses). Cardinality decides how the relationship becomes foreign keys or a join table.",
+          "realWorld": "On Netflix, one account → many profiles is 1:N; a movie ↔ many viewers and a viewer ↔ many movies is M:N, which is why there's a separate 'watch history' table linking them."
+        },
+        {
+          "id": "gen-spec-agg",
+          "name": "Generalization, Specialization & Aggregation",
+          "description": "Building entity hierarchies (ISA) and treating a relationship as a single entity.",
+          "study": "Specialization is top-down: split a general entity into specialised sub-entities (EMPLOYEE → Engineer, Salesman). Generalization is the same hierarchy bottom-up: merge common entities into a super-entity. Aggregation treats a whole relationship as one higher-level entity so it can join another relationship.",
+          "realWorld": "A payment app models 'PaymentMethod' generalized over Card, UPI and Wallet — shared fields live in the parent, specific fields in each child, just like a class hierarchy in code."
+        },
+        {
+          "id": "binary-nary",
+          "name": "Binary vs N-ary Relationship",
+          "description": "Binary links exactly two entity sets; N-ary links three or more.",
+          "study": "A binary relationship involves two entity sets and is the most common, easy-to-model case (STUDENT enrolls COURSE). An N-ary relationship involves three or more entity sets and is harder to model (DOCTOR–PATIENT–MEDICINE in one prescription).",
+          "realWorld": "A food-delivery 'order' is naturally ternary: it links Customer, Restaurant and Delivery-Agent together — three entities meeting in one relationship."
+        },
+        {
+          "id": "er-to-table",
+          "name": "ER Diagram → Table Conversion",
+          "description": "Rules to turn entities and relationships into relational tables.",
+          "study": "Each strong entity becomes a table with its key as primary key. A weak entity's table includes the owner's key. Multivalued attributes get their own table. A 1:N relationship puts the '1' side's key as a foreign key on the 'N' side. An M:N relationship becomes a brand-new join table holding both keys.",
+          "code": "-- Student takes many Courses (M:N); each Course belongs to one Dept\nSTUDENT ( RollNo  PK, Name, DeptID FK )\nCOURSE  ( CourseID PK, Title, Credits, DeptID FK )\nDEPT    ( DeptID PK, DeptName )\n\n-- M:N 'enrolls' becomes its own table:\nENROLLS ( RollNo FK, CourseID FK, Grade,\n          PRIMARY KEY (RollNo, CourseID) );",
+          "codeLang": "sql"
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "name": "Relational Algebra",
+      "importance": "important",
+      "topics": [
+        {
+          "id": "what-is-ra",
+          "name": "What is Relational Algebra?",
+          "description": "A procedural query language: takes relations as input and produces a new relation.",
+          "study": "Relational algebra is the maths behind SQL. Where SQL says what you want, relational algebra is a small set of building-block operations (pick rows, pick columns, combine tables) that you chain together. Each operation says exactly how to compute the result, step by step.",
+          "realWorld": "It's like the assembly language a database engine compiles your SQL down to — the optimizer reasons about these primitive operations to find the fastest plan."
+        },
+        {
+          "id": "core-ops",
+          "name": "The Core Operations",
+          "description": "Selection (σ), Projection (π), set ops, Cartesian product (×), Join (⋈), Division (÷).",
+          "study": "Selection (σ) picks rows that match a condition — it works horizontally. Projection (π) picks columns and drops duplicates — vertically. Union/Intersection/Difference combine union-compatible relations. Cartesian product pairs every row with every row. Join is product + selection. Division answers 'for all' queries.",
+          "code": "σ Dept='CSE' (STUDENT)        -- pick rows: only CSE students\nπ Name, Dept (STUDENT)         -- pick columns: names + depts\nπ Name (σ Dept='CSE'(STUDENT)) -- combine: names of CSE students\n\nA = {1,2,3}  B = {2,3,4}\nA ∪ B = {1,2,3,4}   A ∩ B = {2,3}   A − B = {1}",
+          "codeLang": "text"
+        },
+        {
+          "id": "natural-theta",
+          "name": "Natural Join vs Theta Join",
+          "description": "Natural join auto-matches same-named columns; theta join uses any condition.",
+          "study": "A natural join (⋈) automatically joins on all columns with the same name, keeping the common column once and using equality only. A theta join (⋈θ) joins on any explicit condition (=, <, >, ≤, ≥). An equi-join is a theta join that uses only '='; drop the duplicate column and it becomes a natural join.",
+          "code": "-- Natural join: matches on the shared column name automatically\nR ⋈ S\n\n-- Theta join: any comparison you specify\nR ⋈(R.a > S.b) S\n\n-- Equi-join on same-named column → natural join\nSTUDENT ⋈ COURSE   (on Dept = Dept)",
+          "codeLang": "text"
+        },
+        {
+          "id": "query-practice",
+          "name": "Query Practice",
+          "description": "Combining σ, π, join and difference to express real questions.",
+          "study": "Most queries are just a few primitives chained together. Filter with σ, narrow columns with π, combine tables with a join, and use set difference for 'not in' style questions. Reading these aloud as English is the fastest way to learn them.",
+          "code": "-- Names of all CSE students\nπ Name ( σ Dept='CSE' (STUDENT) )\n\n-- Students whose course is in their own department\nπ Name ( STUDENT ⋈ COURSE )\n\n-- RollNos of students NOT in CSE\nπ RollNo (STUDENT) − π RollNo ( σ Dept='CSE'(STUDENT) )",
+          "codeLang": "text"
+        }
+      ]
+    },
+    {
+      "id": "m4",
+      "name": "SQL",
+      "importance": "most-important",
+      "topics": [
+        {
+          "id": "sql-overview",
+          "name": "Overview of SQL",
+          "description": "The standard declarative language for relational databases, split into DDL, DML, DCL, TCL.",
+          "study": "DDL (CREATE, ALTER, DROP) defines structure. DML (INSERT, UPDATE, DELETE, SELECT) works with data. DCL (GRANT, REVOKE) manages permissions. TCL (COMMIT, ROLLBACK, SAVEPOINT) controls transactions. SQL is declarative: you describe what you want, the engine decides how to fetch it.",
+          "realWorld": "Every time an app shows you 'your 5 most recent orders', a SELECT with ORDER BY and LIMIT ran behind the scenes — you described the result, the database figured out the fastest path."
+        },
+        {
+          "id": "ddl",
+          "name": "DDL — Defining Structure",
+          "description": "CREATE, ALTER and DROP define and change tables and their constraints.",
+          "study": "CREATE TABLE builds a table with column types and constraints (PRIMARY KEY, NOT NULL, CHECK, REFERENCES). ALTER changes an existing table. DROP removes it entirely. Remember: DROP removes the whole table, DELETE removes chosen rows, TRUNCATE quickly empties a table but keeps its structure.",
+          "code": "CREATE TABLE Employee (\n    EmpID  INT PRIMARY KEY,\n    Name   VARCHAR(50) NOT NULL,\n    Dept   VARCHAR(20),\n    Salary DECIMAL(10,2) CHECK (Salary > 0),\n    DeptID INT REFERENCES Department(DeptID)\n);\n\nALTER TABLE Employee ADD Email VARCHAR(60);\nDROP TABLE Employee;",
+          "codeLang": "sql"
+        },
+        {
+          "id": "dml",
+          "name": "DML — Working with Data",
+          "description": "INSERT adds rows, UPDATE changes them, DELETE removes them.",
+          "study": "INSERT adds new rows, UPDATE modifies existing values, DELETE removes rows. Always pair UPDATE and DELETE with a WHERE clause — forgetting it changes or deletes EVERY row, one of the most common and costly SQL mistakes.",
+          "code": "INSERT INTO Employee (EmpID, Name, Dept, Salary)\nVALUES (101, 'Aman', 'CSE', 60000),\n       (102, 'Bina', 'ECE', 55000);\n\nUPDATE Employee SET Salary = Salary * 1.10\nWHERE Dept = 'CSE';\n\nDELETE FROM Employee WHERE Salary < 50000;",
+          "codeLang": "sql"
+        },
+        {
+          "id": "select",
+          "name": "SELECT — Querying Data",
+          "description": "The heart of SQL: filter, group, aggregate and sort data.",
+          "study": "Clauses run in a logical order: FROM → WHERE (filter rows) → GROUP BY (form groups) → HAVING (filter groups) → SELECT (choose columns) → ORDER BY (sort). Aggregate functions (COUNT, SUM, AVG, MIN, MAX) summarise many rows into one. Key exam rule: WHERE filters rows before grouping, HAVING filters groups after.",
+          "code": "-- Average salary per department, only well-paid depts\nSELECT Dept, AVG(Salary) AS AvgSal\nFROM   Employee\nWHERE  Salary > 0          -- row filter (before grouping)\nGROUP BY Dept\nHAVING AVG(Salary) > 60000 -- group filter (after grouping)\nORDER BY AvgSal DESC;",
+          "codeLang": "sql"
+        },
+        {
+          "id": "subqueries",
+          "name": "Nested (Sub) Queries",
+          "description": "A SELECT placed inside another query; the inner result feeds the outer.",
+          "study": "The inner query runs and its result is used by the outer query. A non-correlated subquery is independent and runs once. A correlated subquery references the outer row and re-runs for each one — more powerful but slower.",
+          "code": "-- Employees earning more than the company average\nSELECT Name, Salary\nFROM   Employee\nWHERE  Salary > (SELECT AVG(Salary) FROM Employee);\n\n-- Students whose department is in Kolkata\nSELECT Name FROM Student\nWHERE DeptID IN (SELECT DeptID FROM Department\n                 WHERE Location = 'Kolkata');",
+          "codeLang": "sql"
+        },
+        {
+          "id": "views",
+          "name": "Views",
+          "description": "A virtual table defined by a stored SELECT — holds no data of its own.",
+          "study": "A view is a saved query that behaves like a table when queried. It stores no data itself; it derives rows from base tables on demand. Views give security (expose only chosen columns/rows), simplicity (hide complex joins behind a name), and logical independence (base tables can change while the view stays stable).",
+          "code": "CREATE VIEW HighEarners AS\nSELECT Name, Dept, Salary\nFROM   Employee\nWHERE  Salary > 70000;\n\n-- Use it like a normal table:\nSELECT * FROM HighEarners;",
+          "codeLang": "sql"
+        },
+        {
+          "id": "triggers",
+          "name": "Triggers",
+          "description": "Code that runs automatically in response to INSERT/UPDATE/DELETE events.",
+          "study": "A trigger is procedural code attached to a table that fires automatically on an event. It can run BEFORE or AFTER the event, FOR EACH ROW or per statement. Used for auditing, enforcing complex business rules, and maintaining derived data.",
+          "code": "CREATE TRIGGER log_salary_change\nAFTER UPDATE ON Employee\nFOR EACH ROW\nBEGIN\n  INSERT INTO Audit(EmpID, OldSal, NewSal, ChangedOn)\n  VALUES (OLD.EmpID, OLD.Salary, NEW.Salary, NOW());\nEND;",
+          "codeLang": "sql"
+        }
+      ]
+    },
+    {
+      "id": "m5",
+      "name": "Normalization & Functional Dependency",
+      "importance": "most-important",
+      "topics": [
+        {
+          "id": "fd",
+          "name": "Functional Dependency",
+          "description": "X → Y means: if two rows agree on X, they must agree on Y. 'X determines Y.'",
+          "study": "A functional dependency captures a rule that one set of columns decides another. RollNo → Name means a roll number always maps to exactly one name — you can never have the same roll number with two different names. The left side determines the right side.",
+          "code": "RollNo → Name, Dept     -- RollNo determines Name and Dept\nDeptID → DeptName       -- each department id has one name",
+          "codeLang": "text"
+        },
+        {
+          "id": "closure",
+          "name": "Closure of an Attribute Set",
+          "description": "X⁺ is every attribute that X can determine — used to find keys and test FDs.",
+          "study": "Start with the attributes you have and keep adding anything they functionally determine until nothing new appears. If the closure of X contains every attribute of the relation, X is a super key; if no smaller subset also does, X is a candidate key.",
+          "code": "R(A,B,C,D),  F = { A→B, B→C, C→D }\n\nFind A⁺:\n  start  A⁺ = {A}\n  A→B  ⇒ {A,B}\n  B→C  ⇒ {A,B,C}\n  C→D  ⇒ {A,B,C,D}  = all attributes\n  ⇒ A is a CANDIDATE KEY",
+          "codeLang": "text"
+        },
+        {
+          "id": "candidate-key",
+          "name": "Candidate Key & Prime Attributes",
+          "description": "Super key, candidate key, primary key and prime vs non-prime attributes.",
+          "study": "A super key is any attribute set whose closure is all attributes. A candidate key is a minimal super key (no extra attributes). The primary key is the candidate key the designer picks. A prime attribute belongs to some candidate key; everything else is non-prime.",
+          "realWorld": "A person can be uniquely found by Aadhaar number OR by (phone + DOB) — both are candidate keys. The system picks one, say Aadhaar, as the primary key; the others stay as alternates."
+        },
+        {
+          "id": "anomalies",
+          "name": "Anomalies",
+          "description": "Insertion, deletion and update problems caused by storing everything in one table.",
+          "study": "Cramming unrelated facts into one wide table causes anomalies. Insertion anomaly: you can't add a course with no students without blank student fields. Deletion anomaly: deleting the last student of a course erases the course too. Update anomaly: changing a repeated value (an instructor's name) means editing many rows — miss one and data is inconsistent.",
+          "realWorld": "A single spreadsheet where each row repeats the supplier's address: change the address and you must edit dozens of rows. Splitting suppliers into their own sheet — normalization — kills the problem."
+        },
+        {
+          "id": "normal-forms",
+          "name": "Normal Forms (1NF–5NF)",
+          "description": "Step-by-step decomposition to remove redundancy and anomalies.",
+          "study": "1NF: atomic values, no repeating groups. 2NF: 1NF + no partial dependency on part of a composite key. 3NF: 2NF + no transitive dependency (non-key depending on non-key). BCNF: every determinant is a super key. 4NF: no non-trivial multivalued dependency. 5NF: no remaining join dependency.",
+          "code": "Unnormalised: STUDENT(RollNo, Name, Courses, DeptID, DeptName)\n\n── 1NF (atomic values) ──\nSTUDENT(RollNo, Name, Course, DeptID, DeptName)  PK=(RollNo,Course)\n\n── 2NF (remove partial dependency) ──\nSTUDENT(RollNo, Name, DeptID, DeptName)\nENROLL (RollNo, Course)\n\n── 3NF (remove transitive dependency) ──\nSTUDENT(RollNo, Name, DeptID)\nDEPT   (DeptID, DeptName)\nENROLL (RollNo, Course)",
+          "codeLang": "text"
+        },
+        {
+          "id": "3nf-bcnf",
+          "name": "3NF vs BCNF",
+          "description": "BCNF is a stricter 3NF that removes the 'Y is prime' escape clause.",
+          "study": "In 3NF, for X→Y either X is a super key OR Y is a prime attribute. BCNF drops the second option: for every X→Y, X must be a super key, full stop. Every BCNF relation is in 3NF, but not vice-versa. BCNF removes more redundancy but may not preserve all dependencies.",
+          "realWorld": "BCNF is the 'no exceptions' version of the rule. 3NF lets a couple of edge cases slide for the sake of keeping every dependency; BCNF refuses them to squeeze out the last bit of redundancy."
+        },
+        {
+          "id": "mvd-4nf",
+          "name": "Multivalued Dependency (4NF)",
+          "description": "X →→ Y: independent multi-valued facts that BCNF can't fix; 4NF removes them.",
+          "study": "A multivalued dependency exists when one X value is associated with a set of Y values independently of the other columns. Storing two independent lists in one table forces every combination, creating redundancy. 4NF splits them into separate tables.",
+          "realWorld": "A teacher teaches several courses and speaks several languages — independently. One table (Teacher, Course, Language) forces every course paired with every language. Split into (Teacher, Course) and (Teacher, Language) for 4NF."
+        },
+        {
+          "id": "lossless",
+          "name": "Lossless Decomposition",
+          "description": "Splitting a table so that re-joining it reproduces exactly the original — no extra rows.",
+          "study": "A decomposition of R into R1 and R2 is lossless if joining them back gives exactly R with no spurious rows. The test: the common attributes (R1 ∩ R2) must form a key of at least one of the two tables.",
+          "code": "R(A,B,C),  F = { A→B, A→C }\nDecompose into  R1(A,B)  and  R2(A,C)\n\nCommon attribute = A,  and  A→B  (A is key of R1)\n⇒ Decomposition is LOSSLESS",
+          "codeLang": "text"
+        }
+      ]
+    },
+    {
+      "id": "m6",
+      "name": "Indexing & Hashing",
+      "importance": "important",
+      "topics": [
+        {
+          "id": "why-index",
+          "name": "Why Indexing?",
+          "description": "An auxiliary structure that lets the DBMS jump to data instead of scanning every row.",
+          "study": "An index works like the index at the back of a textbook: instead of reading every page (row) to find a topic, you look it up and jump straight there. It costs a little extra storage and slows writes slightly, but makes reads dramatically faster.",
+          "realWorld": "Searching a million-row users table by email with no index scans all million rows; with an index on email it's near-instant — the difference between a page taking 5 seconds and 5 milliseconds."
+        },
+        {
+          "id": "primary-secondary",
+          "name": "Primary vs Secondary Index",
+          "description": "Primary index is on the sort key (one per table); secondary indexes are on other fields.",
+          "study": "A primary index is built on the field the data file is sorted by — there's only one, and it's usually sparse. A secondary index is built on a non-ordering field; you can have many, and they're usually dense because the data isn't sorted that way.",
+          "realWorld": "A library's shelves are sorted by call number (the primary index). The separate author and title card catalogs are secondary indexes — extra lookup paths into the same books."
+        },
+        {
+          "id": "dense-sparse",
+          "name": "Dense vs Sparse Index",
+          "description": "Dense = one entry per record; sparse = one entry per block.",
+          "study": "A dense index has an entry for every search-key value — faster lookups but a larger index. A sparse index has an entry only for some keys (typically one per data block) — smaller index, slightly slower because you find the block then scan within it. Sparse needs the data sorted on the key.",
+          "code": "DENSE INDEX            SPARSE INDEX\nkey → record           key → block\n10 ─► 10               10 ─► [10,20,30]\n20 ─► 20               40 ─► [40,50,60]\n30 ─► 30\n40 ─► 40               (one entry per block,\n...                     not per record)",
+          "codeLang": "text"
+        },
+        {
+          "id": "btree",
+          "name": "B-Tree and B+ Tree",
+          "description": "Balanced multi-level tree indexes giving O(log n) search, insert and delete.",
+          "study": "Both stay balanced so every search travels a similar short depth. In a B-tree, every node (internal and leaf) holds keys and data pointers. In a B+ tree, internal nodes hold only keys (a directory) and all data sits in linked leaf nodes. The linked leaves make range queries fast, and key-only internal nodes give higher fan-out and fewer disk reads — which is why most databases use B+ trees.",
+          "code": "             ┌───────┐\n             │  30   │      (internal: keys only)\n             └───┬───┘\n        ┌────────┴────────┐\n     ┌──┴──┐           ┌──┴───┐\n     │10 20│           │40 50 │\n     └──┬──┘           └──┬───┘\n  [10|20] ──► [30|40|50] ──► …   (leaves hold data, chained)",
+          "codeLang": "text"
+        },
+        {
+          "id": "hashing",
+          "name": "Hashing",
+          "description": "Compute a record's location directly from its key via h(key) — average O(1) lookup.",
+          "study": "A hash function maps a key straight to a bucket, giving constant-time access without a tree. Static hashing uses a fixed number of buckets (degrades when data outgrows them); dynamic hashing grows and shrinks. When two keys land in the same bucket (a collision), handle it with chaining (a linked list per bucket) or open addressing (probe for the next free slot).",
+          "code": "h(key) = key mod 5      (5 buckets: 0..4)\n\nkey 12 → 12 mod 5 = 2  → bucket 2\nkey 27 → 27 mod 5 = 2  → bucket 2   (COLLISION!)\nkey 33 → 33 mod 5 = 3  → bucket 3",
+          "codeLang": "text"
+        },
+        {
+          "id": "query-opt",
+          "name": "Query Optimization & Cost Estimation",
+          "description": "The optimizer rewrites a query into the cheapest equivalent execution plan.",
+          "study": "One SQL query can run many ways. The optimizer transforms it into a cheaper-but-equivalent form (push selections down before joins, pick the best join order and access method) and estimates each plan's cost using statistics like row counts and index selectivity. Disk I/O usually dominates the cost.",
+          "realWorld": "For SELECT * FROM Emp WHERE id = 5, scanning a million rows is slow. If an index on id exists, the optimizer silently switches to an index lookup — same result, a fraction of the cost. You never asked it to; it just chose the cheaper plan."
+        }
+      ]
+    },
+    {
+      "id": "m7",
+      "name": "Transaction Management",
+      "importance": "important",
+      "topics": [
+        {
+          "id": "transaction",
+          "name": "What is a Transaction?",
+          "description": "A single logical unit of work whose steps must all succeed or all fail together.",
+          "study": "A transaction groups several operations into one all-or-nothing unit. The classic case is a money transfer: debit one account and credit another. If the second step fails, the first must be undone (rolled back) so money is never lost or created.",
+          "code": "BEGIN\n   debit  A by 1000      -- step 1\n   credit B by 1000      -- step 2\nCOMMIT                   -- make permanent\n\n-- If step 2 fails, step 1 is undone → ROLLBACK",
+          "codeLang": "text"
+        },
+        {
+          "id": "acid",
+          "name": "ACID Properties",
+          "description": "Atomicity, Consistency, Isolation, Durability — the four guarantees of a reliable transaction.",
+          "study": "Atomicity: all operations happen or none do. Consistency: the database goes from one valid state to another, respecting all constraints. Isolation: concurrent transactions don't interfere; each appears to run alone. Durability: once committed, changes survive crashes and power loss.",
+          "realWorld": "In a bank transfer: Atomicity — money isn't deducted unless it's also added. Consistency — total money stays the same. Isolation — two simultaneous transfers don't see each other half-done. Durability — once you see 'Transfer successful', it stays done even if the server crashes a second later."
+        },
+        {
+          "id": "states",
+          "name": "Transaction States",
+          "description": "Active → Partially Committed → Committed, or → Failed → Aborted.",
+          "study": "A transaction starts Active (executing). After its final statement it is Partially Committed (changes still in memory). On success it becomes Committed (saved permanently). If something goes wrong it becomes Failed, then Aborted/Rolled Back to the state before it started.",
+          "realWorld": "Like submitting an online payment: 'processing' (active), 'authorising' (partially committed), 'payment successful' (committed) — or 'payment failed, you were not charged' (aborted/rolled back)."
+        },
+        {
+          "id": "serializability",
+          "name": "Serializability",
+          "description": "A concurrent schedule is correct if it gives the same result as some serial order.",
+          "study": "When transactions interleave, the schedule is serializable if it produces the same result as running them one after another. Conflict serializability checks if you can reach a serial order by swapping only non-conflicting adjacent operations (tested with a precedence graph — no cycle means yes). View serializability is more general (same reads and final writes) but NP-complete to test.",
+          "realWorld": "Two people editing a shared doc: as long as the final result matches some order where one finished before the other started, no one's change was silently lost — that's serializability."
+        },
+        {
+          "id": "locking-2pl",
+          "name": "Concurrency Control: Locking",
+          "description": "Shared (read) and exclusive (write) locks, governed by Two-Phase Locking.",
+          "study": "A shared lock (S) allows many readers at once; an exclusive lock (X) allows one writer and no readers. Two-Phase Locking (2PL) guarantees serializability with a growing phase (only acquire locks) followed by a shrinking phase (only release). Strict 2PL holds exclusive locks until commit to prevent cascading rollbacks.",
+          "code": "locks │      ╱‾‾‾‾‾╲\nheld  │     ╱GROWING╲ SHRINKING\n      │    ╱(acquire) ╲(release)\n      └──────────────────────► time\n           ▲ lock point (peak)",
+          "codeLang": "text"
+        },
+        {
+          "id": "timestamp",
+          "name": "Timestamp Ordering Protocol",
+          "description": "Order transactions by a start timestamp instead of using locks.",
+          "study": "Each transaction gets a unique timestamp when it starts. An operation is allowed only if it respects that timestamp order; otherwise the offending transaction is aborted and restarted with a new timestamp. This avoids deadlocks entirely but can cause more restarts under heavy contention.",
+          "realWorld": "Like a deli ticket system: everyone takes a numbered ticket on arrival and is served strictly in number order. Try to jump ahead out of turn and you're sent back to take a fresh ticket."
+        },
+        {
+          "id": "deadlock",
+          "name": "Deadlock",
+          "description": "Two transactions each hold a lock the other needs, so both wait forever.",
+          "study": "A deadlock is a circular wait: T1 holds A and wants B, while T2 holds B and wants A. Handle it by prevention (acquire all locks at once or order resources), avoidance (wait-die / wound-wait using timestamps), or detection & recovery (build a wait-for graph; if it has a cycle, abort a victim to break it).",
+          "code": "  T1 holds X(A) ── wants ─► X(B) held by T2\n        ▲                        │\n        └──── wants X(A) ◄────────┘\n  (T1 waits for T2, T2 waits for T1 → DEADLOCK)",
+          "codeLang": "text"
+        },
+        {
+          "id": "recovery",
+          "name": "Recovery, Commit & Rollback",
+          "description": "COMMIT makes changes permanent; ROLLBACK undoes them; logs restore after a crash.",
+          "study": "COMMIT makes all of a transaction's changes permanent and visible. ROLLBACK undoes everything since the transaction began. Recovery uses write-ahead logging: after a crash, committed transactions are redone and uncommitted ones are undone, restoring a consistent state.",
+          "realWorld": "Like a game's autosave checkpoint: progress past the last checkpoint (uncommitted) is discarded after a crash, while everything saved at the checkpoint (committed) is reliably restored."
+        }
+      ]
+    }
+  ]
+}

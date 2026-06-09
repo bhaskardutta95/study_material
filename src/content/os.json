@@ -1,0 +1,407 @@
+{
+  "id": "os",
+  "title": "Operating Systems",
+  "code": "OS",
+  "icon": "🖥️",
+  "summary": "How an OS manages processes, memory, files and devices — scheduling, deadlocks, paging, security and distributed systems.",
+  "accent": "#10b981",
+  "modules": [
+    {
+      "id": "m1",
+      "name": "Introduction & Types of OS",
+      "importance": "normal",
+      "topics": [
+        {
+          "id": "hw-review",
+          "name": "Computer Hardware Review",
+          "description": "The processor, memory, devices and I/O bus that the OS manages.",
+          "study": "An OS sits on top of hardware: the CPU executes instructions, memory (registers → cache → RAM → disk) forms a speed/size hierarchy, devices do input/output, and the I/O bus connects them all. The OS's whole job is sharing these limited resources safely among programs.",
+          "realWorld": "Your laptop has one CPU but runs a browser, music player and editor at once. The hardware can't do that alone — the OS rapidly juggles them across the same processor, memory and disk."
+        },
+        {
+          "id": "what-is-os",
+          "name": "OS Basic Concepts & Architecture",
+          "description": "A program that manages hardware and provides services to other programs.",
+          "study": "An operating system is the layer between hardware and applications. It manages the CPU, memory, files and devices, and exposes a clean interface (system calls) so apps don't deal with raw hardware. It acts as both a resource manager and an extended/virtual machine that hides messy details.",
+          "realWorld": "When you tap 'Save' in an app, you don't think about disk sectors. The OS turns that simple request into the right low-level device commands — it's the universal translator between your apps and the metal."
+        },
+        {
+          "id": "types-of-os",
+          "name": "Types of Operating Systems",
+          "description": "Mainframe, server, multiprocessor, embedded, real-time, sensor-node and smart-card OS.",
+          "study": "OSes are tuned to their job: mainframe OS for huge batch/transaction workloads, server OS for many remote clients, multiprocessor OS to coordinate many CPUs, embedded OS for fixed-function devices, real-time OS for strict deadlines, sensor-node and smart-card OS for tiny, low-power chips.",
+          "realWorld": "A car's airbag controller runs a real-time OS (must react within milliseconds), your microwave runs an embedded OS, and your bank's backend runs a mainframe OS — same idea, wildly different constraints."
+        },
+        {
+          "id": "virtualization",
+          "name": "Virtualization",
+          "description": "Running multiple virtual machines, each thinking it owns the hardware.",
+          "study": "Virtualization lets one physical machine host several isolated virtual machines via a hypervisor. Each VM runs its own OS as if alone, while the hypervisor shares the real CPU, memory and disk between them. It improves utilisation, isolation and flexibility.",
+          "realWorld": "Cloud providers like AWS run thousands of customer servers on shared physical machines using virtualization — you rent a 'server' that's really a VM sharing hardware with strangers, fully isolated."
+        },
+        {
+          "id": "foss",
+          "name": "Free & Open Source OS",
+          "description": "Operating systems whose source code is freely available to use and modify.",
+          "study": "Free and open-source operating systems (like Linux and the BSDs) publish their source code, letting anyone study, modify and redistribute it. This drives transparency, community contributions, security auditing and zero licensing cost — which is why they dominate servers and embedded devices.",
+          "realWorld": "Android (built on the Linux kernel) powers billions of phones, and almost every web server you visit runs Linux — open-source OSes quietly run most of the internet."
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "name": "Operating System Architecture",
+      "importance": "normal",
+      "topics": [
+        {
+          "id": "monolithic",
+          "name": "Monolithic System",
+          "description": "The entire OS runs as one large program in kernel mode.",
+          "study": "In a monolithic kernel, all OS services (scheduling, memory, file system, drivers) live together in one big program running in privileged kernel mode. This is fast because everything calls everything directly, but a bug anywhere can crash the whole system.",
+          "realWorld": "Linux is largely monolithic — fast and efficient, but a faulty driver loaded into the kernel can bring down the entire machine, which is why kernel modules are reviewed carefully."
+        },
+        {
+          "id": "layered",
+          "name": "Layered System",
+          "description": "The OS is split into stacked layers, each using only the layer below.",
+          "study": "A layered OS organises functionality into levels (hardware at the bottom, user interface at the top). Each layer offers services to the one above and uses only the one below, making the system easier to build, test and understand — at the cost of some performance from crossing layers.",
+          "realWorld": "Like a company hierarchy where each level only talks to the one directly above and below — clear responsibilities and easy to debug, but messages take longer to travel top to bottom."
+        },
+        {
+          "id": "microkernel",
+          "name": "Microkernel",
+          "description": "Keep the kernel tiny; run most services as user-space processes.",
+          "study": "A microkernel keeps only the essentials (IPC, basic scheduling, low-level memory) in kernel mode and moves drivers, file systems and more into user-space processes. This boosts reliability and security — a crashing driver doesn't take down the kernel — but adds message-passing overhead.",
+          "realWorld": "Used in high-reliability systems like spacecraft and some phones (e.g. the seL4-based kernels), where one component failing must never crash the whole device."
+        },
+        {
+          "id": "client-server",
+          "name": "Client-Server Model",
+          "description": "OS services act as servers; programs request them as clients via messages.",
+          "study": "In the client-server model, OS functions are provided by server processes, and user programs (clients) request them by sending messages. The kernel mainly delivers messages between them. It's a natural fit for microkernels and extends cleanly across a network.",
+          "realWorld": "It's the same pattern as the web: your browser (client) asks a server for a page. Inside an OS, an app (client) asks the file-system server to open a file."
+        },
+        {
+          "id": "system-calls",
+          "name": "System Calls",
+          "description": "The controlled gateway a program uses to request OS services.",
+          "study": "A system call is how a user program asks the kernel to do something privileged — open a file, create a process, allocate memory. It switches the CPU from user mode to kernel mode, runs the service safely, and returns. It's the official, guarded door between apps and the OS.",
+          "code": "// A C program creating a child process via the fork() system call\n#include <unistd.h>\nint main() {\n    pid_t pid = fork();      // system call into the kernel\n    if (pid == 0)\n        write(1, \"child\\n\", 6);   // write() system call\n    else\n        write(1, \"parent\\n\", 7);\n    return 0;\n}",
+          "codeLang": "c"
+        },
+        {
+          "id": "linker-loader",
+          "name": "Linker and Loader",
+          "description": "The linker combines code into an executable; the loader places it in memory to run.",
+          "study": "A linker takes compiled object files and libraries and stitches them into a single executable, resolving references between them. A loader then copies that executable into memory, sets up its address space, and starts execution. Together they turn source into a running program.",
+          "realWorld": "Compiling a C project: each .c file becomes an .o file, the linker merges them (plus libraries like printf) into one program, and when you run it the loader places it in RAM and jumps to main()."
+        },
+        {
+          "id": "booting",
+          "name": "Booting of an OS",
+          "description": "The startup sequence from power-on to a running operating system.",
+          "study": "On power-on, firmware (BIOS/UEFI) runs a power-on self-test, then loads a small bootloader from disk. The bootloader loads the OS kernel into memory and hands control to it. The kernel initialises hardware, mounts the file system, and starts the first process — and the system is ready.",
+          "realWorld": "The few seconds between pressing your laptop's power button and seeing the login screen is exactly this chain: firmware → bootloader → kernel → first user process."
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "name": "Process Management",
+      "importance": "most-important",
+      "topics": [
+        {
+          "id": "process-pcb",
+          "name": "Process & Process Control Block",
+          "description": "A process is a program in execution; the PCB stores everything the OS knows about it.",
+          "study": "A process is a running program plus its current state — code, data, stack and registers. The OS tracks each one in a Process Control Block (PCB): its ID, state, program counter, register values, memory limits and open files. Switching between processes means saving and restoring PCBs.",
+          "realWorld": "Open three browser windows of the same app and you get three processes — same program, separate states. The OS keeps a PCB 'index card' for each so it can pause and resume them independently."
+        },
+        {
+          "id": "process-states",
+          "name": "Process State Diagram",
+          "description": "New → Ready → Running → Waiting → Terminated.",
+          "study": "A process moves through states: New (being created), Ready (waiting for the CPU), Running (executing), Waiting/Blocked (waiting for I/O or an event), and Terminated (finished). The scheduler moves processes between Ready and Running; I/O moves them to and from Waiting.",
+          "code": "        admit        dispatch\n  NEW ───────► READY ─────────► RUNNING ──► TERMINATED\n                 ▲                 │\n                 │   I/O complete  │ I/O request\n                 └──── WAITING ◄───┘",
+          "codeLang": "text"
+        },
+        {
+          "id": "scheduling-criteria",
+          "name": "Process Scheduling Criteria",
+          "description": "The goals a scheduler optimises: CPU use, throughput, turnaround, waiting and response time.",
+          "study": "Schedulers balance several metrics: CPU utilisation (keep the CPU busy), throughput (jobs finished per unit time), turnaround time (submission to completion), waiting time (time spent in the ready queue), and response time (request to first response). Improving one often hurts another.",
+          "realWorld": "Like a restaurant kitchen deciding order priority: serve the most customers per hour (throughput), keep wait times low, and get a first dish out fast (response) — you can't perfectly maximise all at once."
+        },
+        {
+          "id": "scheduling-algorithms",
+          "name": "Process Scheduling Algorithms",
+          "description": "FCFS, SJF, Priority, and Round Robin decide who runs next.",
+          "study": "FCFS runs jobs in arrival order (simple, but a long job delays everyone). SJF runs the shortest job first (optimal average wait, but needs to know job lengths). Priority scheduling picks the highest priority (risk of starvation). Round Robin gives each process a fixed time slice in turn (fair, good for time-sharing).",
+          "code": "Round Robin, time quantum = 2\nProcesses (burst): P1=4, P2=3, P3=1\n\nTime: P1 P1 P2 P2 P3 P1 P1 P2\n       └─q─┘ └─q─┘ ✓  └─q─┘ ✓\nEach process runs at most 2 units, then yields the CPU.",
+          "codeLang": "text"
+        },
+        {
+          "id": "schedulers",
+          "name": "Types of Schedulers",
+          "description": "Long-term, short-term and medium-term schedulers control different stages.",
+          "study": "The long-term scheduler decides which jobs enter the system (controls the degree of multiprogramming). The short-term scheduler (dispatcher) picks which ready process runs next — it runs very frequently. The medium-term scheduler swaps processes in and out of memory to ease load.",
+          "realWorld": "A theme park: the gate (long-term) controls how many people enter, the ride operator (short-term) picks who boards next, and temporarily clearing a crowded area (medium-term) is swapping people out to relieve pressure."
+        },
+        {
+          "id": "threads",
+          "name": "Threads & Thread Scheduling",
+          "description": "Lightweight units of execution that share a process's memory.",
+          "study": "A thread is a single sequence of execution within a process. Multiple threads in one process share its memory and files but have their own stack and registers, so they're cheaper to create and switch than processes. User-level threads are managed in user space; kernel-level threads are scheduled by the OS.",
+          "realWorld": "A web browser uses threads: one renders the page, one handles your scrolling, one downloads images — all sharing the same tab's memory, so the page stays responsive while loading."
+        },
+        {
+          "id": "ipc",
+          "name": "Inter-Process Communication",
+          "description": "How separate processes exchange data — shared memory or message passing.",
+          "study": "Processes are isolated, so they need IPC to cooperate. Shared memory gives them a common region to read/write (fast, but needs synchronisation). Message passing sends data through the kernel via send/receive (simpler and safer, works across machines). Pipes, sockets and queues are common mechanisms.",
+          "realWorld": "Typing `ls | grep txt` in a terminal uses a pipe — the output of one process flows as input into the next. That's IPC you use every day."
+        },
+        {
+          "id": "race-critical",
+          "name": "Race Condition & Critical Region",
+          "description": "When shared-data access order changes the result; the critical section must be protected.",
+          "study": "A race condition happens when two threads access shared data at the same time and the outcome depends on timing. The critical section is the code that touches shared data; only one thread may be inside it at once (mutual exclusion). A solution must also ensure progress and bounded waiting.",
+          "code": "// Two threads both run: balance = balance + 100\n// Interleaving causes a lost update:\nT1 reads balance (1000)\nT2 reads balance (1000)\nT1 writes 1100\nT2 writes 1100   ← should be 1200! one deposit lost\n// Fix: protect the update in a critical section.",
+          "codeLang": "text"
+        },
+        {
+          "id": "semaphore-mutex-monitor",
+          "name": "Semaphore, Mutex & Monitor",
+          "description": "Synchronisation tools that enforce safe access to shared resources.",
+          "study": "A mutex is a lock allowing one thread in at a time (lock/unlock). A semaphore is a counter: wait() decrements (blocks at 0), signal() increments — a binary semaphore acts like a mutex, a counting one guards N identical resources. A monitor bundles shared data with the procedures that access it, enforcing mutual exclusion automatically.",
+          "code": "// Counting semaphore guarding a critical section\nwait(S):   while S <= 0: wait();  S = S - 1\nsignal(S): S = S + 1\n\nwait(mutex)\n   // --- critical section: touch shared data ---\nsignal(mutex)",
+          "codeLang": "text"
+        },
+        {
+          "id": "classical-sync",
+          "name": "Classical Synchronization Problems",
+          "description": "Producer-Consumer, Readers-Writers and Dining Philosophers.",
+          "study": "These model real concurrency challenges. Producer-Consumer: a bounded buffer shared by producers and consumers without overfilling or reading empty. Readers-Writers: many can read together but writes need exclusive access. Dining Philosophers: five share five forks — avoid deadlock and starvation while eating.",
+          "realWorld": "Producer-Consumer is exactly a print queue: apps add jobs (produce), the printer removes them (consume), and a fixed-size buffer keeps them from clashing."
+        }
+      ]
+    },
+    {
+      "id": "m4",
+      "name": "Deadlock",
+      "importance": "important",
+      "topics": [
+        {
+          "id": "deadlock-characterization",
+          "name": "Deadlock Characterization",
+          "description": "Four conditions must all hold for a deadlock to occur.",
+          "study": "A deadlock needs all four: mutual exclusion (a resource is held by one process), hold-and-wait (a process holds one resource and waits for another), no preemption (resources can't be forcibly taken), and circular wait (a cycle of processes each waiting on the next). Break any one and deadlock can't happen.",
+          "code": "P1 holds R1, wants R2\nP2 holds R2, wants R1\n\n   P1 ──wants──► R2 ──held by──► P2\n   ▲                              │\n   └───── held by ◄── R1 ◄──wants─┘\n   Circular wait → DEADLOCK",
+          "codeLang": "text"
+        },
+        {
+          "id": "deadlock-handling",
+          "name": "Methods of Handling Deadlock",
+          "description": "Prevention, avoidance, detection & recovery, or just ignore it.",
+          "study": "Four broad strategies: prevention (design so a necessary condition can never hold), avoidance (allocate resources only if the system stays in a safe state), detection & recovery (let it happen, then find and fix it), and the ostrich approach (ignore it if deadlocks are rare and costly to prevent).",
+          "realWorld": "Most desktop OSes use the 'ostrich approach' for app deadlocks — they're rare enough that it's cheaper to let the user kill a frozen app than to prevent every possible deadlock."
+        },
+        {
+          "id": "deadlock-prevention-avoidance",
+          "name": "Prevention & Avoidance",
+          "description": "Stop a deadlock condition, or steer allocations to stay in safe states.",
+          "study": "Prevention removes a condition outright — e.g. require all resources up front (no hold-and-wait) or impose a global ordering on resources (no circular wait). Avoidance is smarter: using extra info about future needs, the Banker's Algorithm grants a request only if the system remains in a safe state where every process can still finish.",
+          "realWorld": "The Banker's Algorithm works like a cautious bank manager: it only approves a loan (resource grant) if it can still guarantee every customer can eventually be fully funded — never lending itself into a corner."
+        },
+        {
+          "id": "deadlock-detection-recovery",
+          "name": "Detection & Recovery",
+          "description": "Find deadlocks with a wait-for graph, then break them by killing or preempting.",
+          "study": "Detection periodically builds a wait-for graph and looks for a cycle — a cycle means deadlock. Recovery breaks it by terminating processes (abort one or all in the cycle) or by preempting resources (take a resource from one process and roll it back), choosing victims to minimise cost.",
+          "realWorld": "A database engine detects deadlocks between transactions, then automatically aborts the 'cheapest' one (least work done) and restarts it — you might just see a 'deadlock victim, please retry' error."
+        }
+      ]
+    },
+    {
+      "id": "m5",
+      "name": "Memory Management",
+      "importance": "most-important",
+      "topics": [
+        {
+          "id": "contiguous",
+          "name": "Contiguous Memory Allocation",
+          "description": "Each process gets a single continuous block of memory.",
+          "study": "In contiguous allocation, every process occupies one unbroken region of RAM. It's simple and fast, but suffers fragmentation: external fragmentation leaves scattered free gaps too small to use, while fixed partitions cause internal fragmentation (wasted space inside a block). First-fit, best-fit and worst-fit decide which gap to use.",
+          "realWorld": "Like parking cars only in single continuous spaces in a lot — over time you get awkward gaps between cars that are too small for any new car, even though the total free space is large."
+        },
+        {
+          "id": "paging",
+          "name": "Paging",
+          "description": "Split memory into fixed-size pages and frames to eliminate external fragmentation.",
+          "study": "Paging divides a process's logical memory into fixed-size pages and physical memory into equal-size frames. A page table maps each page to a frame, so a process need not be contiguous in RAM. The CPU splits an address into a page number (index into the table) and an offset within the page.",
+          "code": "Logical address → [ page number | offset ]\n\npage table:  page 0 → frame 5\n             page 1 → frame 2\n             page 2 → frame 7\n\nAddress in page 1, offset 30  →  frame 2, offset 30",
+          "codeLang": "text"
+        },
+        {
+          "id": "swapping",
+          "name": "Swapping",
+          "description": "Move whole processes between RAM and disk to free up memory.",
+          "study": "Swapping temporarily moves a process out of RAM to a backing store (disk) and brings it back later. It lets the system run more processes than physically fit in memory, at the cost of slow disk transfers. It's a coarse-grained ancestor of demand paging.",
+          "realWorld": "When your phone has many apps open, the OS suspends background apps to storage and reloads them when you switch back — the brief reload pause is swapping in action."
+        },
+        {
+          "id": "virtual-memory",
+          "name": "Virtual Memory",
+          "description": "Run programs larger than RAM by keeping only needed pages in memory.",
+          "study": "Virtual memory gives each process the illusion of a large, private address space. Only the pages currently needed sit in RAM; the rest stay on disk and are loaded on demand (demand paging). This allows large programs, more multiprogramming, and isolation between processes.",
+          "realWorld": "You can open a 4 GB video editor on a laptop with 8 GB RAM while running many other apps — virtual memory keeps only the active parts in RAM and pages the rest from disk as needed."
+        },
+        {
+          "id": "page-table",
+          "name": "Page Table Structure",
+          "description": "Mapping pages to frames — and handling huge address spaces.",
+          "study": "A page table maps page numbers to frame numbers. For large address spaces a single flat table is too big, so OSes use multi-level (hierarchical) page tables, hashed page tables, or inverted page tables. A TLB (a small fast cache of recent translations) speeds up the common case.",
+          "realWorld": "A multi-level page table is like a book's table of contents pointing to chapter sub-indexes — you don't list every page in one giant index; you drill down only into the part you need."
+        },
+        {
+          "id": "page-replacement",
+          "name": "Page Replacement Algorithms",
+          "description": "When memory is full, decide which page to evict: FIFO, LRU, Optimal.",
+          "study": "On a page fault with no free frame, a page must be evicted. FIFO evicts the oldest-loaded page (simple, can suffer Belady's anomaly). LRU evicts the least-recently-used page (good, approximates the optimal). Optimal evicts the page not needed for the longest future time (best, but needs the future — used as a benchmark).",
+          "code": "Reference string: 1 2 3 1 2 4   (3 frames, FIFO)\n\n1 → [1]            fault\n2 → [1 2]          fault\n3 → [1 2 3]        fault\n1 → hit\n2 → hit\n4 → [4 2 3]        fault (evict oldest = 1)",
+          "codeLang": "text"
+        },
+        {
+          "id": "page-fault",
+          "name": "Page Fault Handling & Page Size",
+          "description": "What happens when a needed page isn't in memory, and the trade-offs of page size.",
+          "study": "A page fault occurs when a process accesses a page not in RAM. The OS pauses the process, finds the page on disk, loads it into a free (or freed) frame, updates the page table, and resumes. Page size is a trade-off: large pages mean smaller tables but more internal fragmentation; small pages mean less waste but bigger tables and more faults.",
+          "realWorld": "The tiny stutter when you switch to an app you haven't used in a while is often page faults — the OS fetching that app's pages back from disk into RAM before it can continue."
+        },
+        {
+          "id": "segmentation",
+          "name": "Segmentation",
+          "description": "Divide memory by logical units (code, stack, data) instead of fixed pages.",
+          "study": "Segmentation splits a program into variable-size logical segments — code, stack, heap, data — each with its own base and limit. An address is a segment number plus an offset. It matches how programmers think and aids protection/sharing, but variable sizes bring back external fragmentation. Modern systems often combine segmentation with paging.",
+          "realWorld": "Segmentation maps to a program's natural parts: 'the code segment', 'the stack segment'. A stack-overflow error is the OS catching an offset that runs past a segment's limit."
+        }
+      ]
+    },
+    {
+      "id": "m6",
+      "name": "File Management",
+      "importance": "important",
+      "topics": [
+        {
+          "id": "file-naming",
+          "name": "File Naming & Types",
+          "description": "How files are named, and the common file types an OS recognises.",
+          "study": "A file is a named collection of related data on storage. Naming rules (length, allowed characters, extensions) vary by OS, and extensions hint at type. Common types include regular files (text/binary), directories, and special files for devices. The OS uses type info to decide how to handle a file.",
+          "realWorld": "The '.jpg' or '.exe' at the end of a filename tells your OS whether to open it in a photo viewer or run it as a program — that's file typing by extension."
+        },
+        {
+          "id": "file-structures",
+          "name": "File Structures",
+          "description": "How a file's contents are organised: byte stream, records, or tree.",
+          "study": "Files can be structured as an unstructured byte sequence (most flexible — Unix style), as fixed/variable-length records, or as a tree of keyed records for fast search. The OS usually treats a file as a stream of bytes and leaves higher structure to applications.",
+          "realWorld": "A '.txt' file is just a byte stream; a database file imposes record structure on top; both sit on the same OS that only sees bytes — the meaning is added by the app reading it."
+        },
+        {
+          "id": "directory-structure",
+          "name": "Single-Level vs Hierarchical Directories",
+          "description": "Flat directories vs nested folders organised as a tree.",
+          "study": "A single-level directory keeps all files in one list — simple but names must be unique and it gets unwieldy. A hierarchical (tree) directory lets folders contain folders, so files are grouped logically and the same name can exist in different folders. A full path names the route from root to file.",
+          "realWorld": "Your computer's nested folders — Documents → Projects → study_material — are a hierarchical directory. Imagine every file you own crammed into one folder instead; that's the single-level pain it solves."
+        },
+        {
+          "id": "shared-files",
+          "name": "Shared Files",
+          "description": "Letting one file appear in multiple directories via links.",
+          "study": "Shared files let a single file be accessed from several directories without duplicating it, using links. A hard link is another directory entry pointing to the same data (shares an inode). A symbolic (soft) link is a small file holding a path to the target. Sharing saves space but needs care when deleting.",
+          "realWorld": "A shortcut on your desktop pointing to a program elsewhere is a symbolic link — delete the shortcut and the real program stays; the shortcut just records where to find it."
+        },
+        {
+          "id": "disk-management",
+          "name": "Disk Management & Algorithms",
+          "description": "Scheduling disk-head movement to serve I/O requests efficiently.",
+          "study": "Because moving the disk head (seek) is slow, the OS reorders pending requests to cut total head movement. FCFS serves in arrival order. SSTF picks the nearest request next. SCAN (elevator) sweeps in one direction then reverses; C-SCAN sweeps one way and jumps back for uniform waits. Goal: minimise seek time.",
+          "code": "Head at 50, requests: 82 170 43 140 24\n\nSCAN (elevator, moving up):\n  50 → 82 → 140 → 170 → (end) → 43 → 24\n  Serve everything in one direction, then reverse.",
+          "codeLang": "text"
+        }
+      ]
+    },
+    {
+      "id": "m7",
+      "name": "Security & Protection",
+      "importance": "important",
+      "topics": [
+        {
+          "id": "security-threats",
+          "name": "Security Threats & Attackers",
+          "description": "Who attacks systems and what they target: confidentiality, integrity, availability.",
+          "study": "Security defends three goals — confidentiality (no unauthorised reading), integrity (no unauthorised changing), and availability (service stays up). Threats range from casual snoopers to organised attackers and insiders. Understanding the attacker's goal and capability shapes the defences you choose.",
+          "realWorld": "A ransomware attack hits all three: it steals data (confidentiality), encrypts/changes it (integrity), and locks you out (availability) — which is why it's so damaging."
+        },
+        {
+          "id": "access-control",
+          "name": "Controlling Access to Resources",
+          "description": "Protection domains and Access Control Lists decide who can do what.",
+          "study": "A protection domain is the set of (object, rights) pairs a process may use at a moment. This is often modelled as an access matrix of subjects vs objects. An Access Control List (ACL) stores, per object, who may access it and how (read/write/execute) — the column-wise view of that matrix.",
+          "code": "File: report.txt   (Access Control List)\n  alice : read, write\n  bob   : read\n  guest : (no access)\n\nEach object lists exactly who may do what.",
+          "codeLang": "text"
+        },
+        {
+          "id": "software-exploits",
+          "name": "Exploiting Software",
+          "description": "Buffer overflow, integer overflow, dangling pointer and null-pointer attacks.",
+          "study": "Many attacks abuse coding bugs. A buffer overflow writes past an array's end to overwrite memory (e.g. a return address) and hijack control. Integer overflow wraps a value past its max to bypass size checks. A dangling pointer references freed memory; a null-pointer dereference uses an uninitialised pointer — both cause crashes or exploits.",
+          "code": "// Classic buffer overflow: no bounds check\nchar buf[8];\nstrcpy(buf, user_input);   // input > 8 bytes overruns buf,\n                           // can overwrite the return address\n// Fix: use strncpy / bounds-checked copies.",
+          "codeLang": "c"
+        },
+        {
+          "id": "malware",
+          "name": "Malware",
+          "description": "Worms, viruses and Trojans — how malicious software spreads and hides.",
+          "study": "A virus attaches to a host program and runs when that program runs, spreading to other files. A worm is standalone and self-propagates across networks without a host. A Trojan disguises itself as useful software while doing something harmful. Defences: least privilege, patching, antivirus and user caution.",
+          "realWorld": "A 'free game' download that secretly installs a keylogger is a Trojan; the 2017 WannaCry outbreak that spread itself machine-to-machine across networks was a worm — same 'malware' label, very different spread."
+        }
+      ]
+    },
+    {
+      "id": "m8",
+      "name": "Distributed Operating System",
+      "importance": "normal",
+      "topics": [
+        {
+          "id": "distributed-goals",
+          "name": "Goals of a Distributed OS",
+          "description": "Make many networked computers look and act like one coherent system.",
+          "study": "A distributed OS coordinates independent computers connected by a network so they appear as a single system. Key goals are transparency (hide where things actually are), resource sharing, scalability, reliability through redundancy, and good performance despite the network. The hard part is doing this without shared memory or a global clock.",
+          "realWorld": "Google's search runs across thousands of machines, but you just see one search box and one fast result — the distributed system hides the entire fleet behind a single experience."
+        },
+        {
+          "id": "rpc",
+          "name": "Remote Procedure Call",
+          "description": "Call a function on another machine as if it were local.",
+          "study": "RPC lets a program invoke a procedure on a remote machine using an ordinary function-call syntax. A client stub packages (marshals) the arguments, sends them over the network, the server runs the procedure and returns the result, which is unmarshalled back. It hides networking behind a familiar call.",
+          "code": "// To the programmer it looks local:\nresult = getUserBalance(userId);\n\n// Under the hood (RPC):\n//   client stub  → marshal args → network →\n//   server stub  → run getUserBalance → return →\n//   network → unmarshal → result",
+          "codeLang": "text"
+        },
+        {
+          "id": "name-resolution",
+          "name": "Name Resolution",
+          "description": "Translate human-friendly names into machine addresses across the system.",
+          "study": "In a distributed system, resources are referred to by names that must be resolved to physical locations/addresses. A naming service (often hierarchical and distributed) maps names to addresses, allowing resources to move without breaking references — a core part of location transparency.",
+          "realWorld": "DNS is exactly this: it turns 'google.com' into an IP address. The site can move to new servers and you still reach it by the same name — name resolution did the translation."
+        },
+        {
+          "id": "clock-sync",
+          "name": "Clock Synchronization",
+          "description": "Keep clocks across machines agreed enough to order events.",
+          "study": "Separate computers have slightly different clocks that drift apart, yet they must agree on event ordering. Physical synchronisation (e.g. NTP, Berkeley algorithm) keeps real clocks close; logical clocks (Lamport timestamps) instead capture the happened-before order of events without needing perfectly synced time.",
+          "realWorld": "When two bank ATMs in different cities record transactions, the system must agree which happened first. NTP keeps their clocks aligned; logical clocks ensure a consistent order even when clocks disagree slightly."
+        }
+      ]
+    }
+  ]
+}

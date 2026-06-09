@@ -1,0 +1,140 @@
+/* ---------------------------------------------------------------------------
+   Layout — header, footer, menu and page-level grids.
+   Shared by every page through <PageLayout>.
+   --------------------------------------------------------------------------- */
+
+/* ---- Header ---- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 var(--space-5);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.site-header__brand-mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--color-primary), #8b5cf6);
+  font-size: 1rem;
+}
+
+.site-header__spacer {
+  flex: 1;
+}
+
+/* ---- Menu (subject switcher) ---- */
+.menu {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.menu__link {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: background 0.15s, color 0.15s;
+}
+
+.menu__link:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+.menu__link--active {
+  color: var(--color-text);
+  background: var(--accent-soft);
+}
+
+/* ---- Footer ---- */
+.site-footer {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--color-text-faint);
+  font-size: 0.85rem;
+}
+
+.site-footer a {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---- Page header block ---- */
+.page-head {
+  margin-bottom: var(--space-6);
+}
+
+.page-head__title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  letter-spacing: -0.03em;
+}
+
+.page-head__subtitle {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  max-width: 60ch;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.back-link:hover {
+  color: var(--color-text);
+}
+
+/* ---- Grids ---- */
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-5);
+}
+
+.module-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.topic-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .app-main {
+    padding: var(--space-5) var(--space-4);
+  }
+  .menu__link {
+    padding: var(--space-2);
+  }
+}
