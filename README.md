@@ -14,7 +14,8 @@ Built with **Vite + React + TypeScript**. No backend. Deploys to **GitHub Pages*
   server rewrites.
 - **Content as data** — each subject is a JSON file in `src/content/` shaped
   like the `Subject` type. The UI renders generically, so adding a subject is
-  pure data (see below). The original source documents live in `docs/`.
+  pure data (see below). The app ships only this JSON; original source documents
+  are kept locally and are gitignored.
 - **Common CSS** — all styles live in four shared files in `src/styles/`
   (`tokens`, `base`, `layout`, `components`), imported once in `main.tsx`.
   Components use shared class names only — no inline or per-component CSS.

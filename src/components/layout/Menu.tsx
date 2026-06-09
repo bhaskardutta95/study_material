@@ -1,12 +1,13 @@
 import { NavLink } from 'react-router-dom';
-import { subjects } from '../../content';
+import GlobalSearch from './GlobalSearch';
 
 /**
- * Subject switcher. Reads the registry, so new subjects appear automatically.
+ * Header nav: Home + global topic search.
+ * (Per-subject links live in the sidebar contents tree, not here.)
  */
 export default function Menu() {
   return (
-    <nav className="menu" aria-label="Subjects">
+    <nav className="menu" aria-label="Primary">
       <NavLink
         to="/"
         end
@@ -16,17 +17,7 @@ export default function Menu() {
       >
         Home
       </NavLink>
-      {subjects.map((s) => (
-        <NavLink
-          key={s.id}
-          to={`/subject/${s.id}`}
-          className={({ isActive }) =>
-            'menu__link' + (isActive ? ' menu__link--active' : '')
-          }
-        >
-          {s.code}
-        </NavLink>
-      ))}
+      <GlobalSearch />
     </nav>
   );
 }

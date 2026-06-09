@@ -166,7 +166,251 @@
   border-top: 1px solid var(--color-border);
 }
 
+/* ---- Sidebar filter search ---- */
+.sidebar__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+.sidebar__search-icon {
+  position: absolute;
+  left: var(--space-3);
+  font-size: 0.8rem;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.sidebar__search-input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3) var(--space-2) 2rem;
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: 0.85rem;
+}
+.sidebar__search-input::placeholder {
+  color: var(--color-text-faint);
+}
+.sidebar__search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.sidetree__empty {
+  padding: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--color-text-faint);
+}
+
+/* ---- Header global search ---- */
+.gsearch {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.gsearch__icon {
+  position: absolute;
+  left: var(--space-3);
+  font-size: 0.8rem;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.gsearch__input {
+  width: 230px;
+  max-width: 40vw;
+  padding: var(--space-2) var(--space-3) var(--space-2) 2rem;
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text);
+  font-size: 0.88rem;
+  transition: border-color 0.15s, width 0.15s;
+}
+.gsearch__input::placeholder {
+  color: var(--color-text-faint);
+}
+.gsearch__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.gsearch__results {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: min(360px, 86vw);
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: var(--space-1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 40;
+}
+.gsearch__empty {
+  padding: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--color-text-faint);
+}
+.gsearch__result {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  text-align: left;
+}
+.gsearch__result[data-active='true'] {
+  background: var(--color-primary-soft);
+}
+.gsearch__result-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.gsearch__result-ctx {
+  font-size: 0.75rem;
+  color: var(--color-text-faint);
+}
+
+/* ---- Sidebar contents tree (Subject → Module → Topics) ---- */
+.sidetree {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidetree__group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* A node is a row: [chevron toggle] [navigation link]. The toggle only
+   expands/collapses; the link changes the page. */
+.sidetree__node {
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+}
+.sidetree__node:hover {
+  background: var(--color-surface-2);
+}
+
+.sidetree__toggle {
+  flex-shrink: 0;
+  width: 24px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-faint);
+  border-radius: var(--radius-sm);
+}
+.sidetree__toggle:hover {
+  color: var(--color-text);
+}
+
+.sidetree__rowlink {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-2) var(--space-2) 0;
+  color: var(--color-text-muted);
+  transition: color 0.15s;
+}
+.sidetree__rowlink:hover {
+  color: var(--color-text);
+}
+
+.sidetree__node--subject .sidetree__rowlink {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--color-text);
+}
+.sidetree__node--subject .sidetree__rowlink[data-active='true'] {
+  color: var(--accent);
+}
+
+.sidetree__node--module .sidetree__rowlink {
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.sidetree__chevron {
+  flex-shrink: 0;
+  font-size: 0.58rem;
+  color: inherit;
+  transition: transform 0.18s ease;
+}
+.sidetree__chevron[data-open='true'] {
+  transform: rotate(90deg);
+}
+
+.sidetree__icon {
+  font-size: 0.95rem;
+}
+
+.sidetree__index {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-text-faint);
+}
+
+.sidetree__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidetree__children {
+  margin-left: var(--space-3);
+  padding-left: var(--space-2);
+  border-left: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sidetree__topics {
+  margin-left: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sidetree__topic {
+  display: block;
+  padding: var(--space-1) var(--space-2);
+  border-left: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  transition: background 0.15s, color 0.15s;
+}
+.sidetree__topic:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+.sidetree__topic[data-active='true'] {
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+
 /* ---- Topic card ---- */
+.topic-anchor {
+  /* Offset so the sticky header doesn't cover a scrolled-to card. */
+  scroll-margin-top: calc(var(--header-h) + var(--space-4));
+}
+
 .topic__heading {
   display: flex;
   flex-direction: column;

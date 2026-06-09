@@ -3,6 +3,9 @@ dist
 dist-ssr
 *.local
 .DS_Store
+
+# Source study documents are kept local only — the app ships the extracted JSON
+docs/
 .vite
 *.log
 
