@@ -20,10 +20,15 @@ export default function SubjectPage() {
   const activeModule = params.get('m');
   const subject = getSubject(subjectId);
 
-  // Bulk expand/collapse command broadcast to every module (seq forces re-apply).
+  // One toggle controls every module. `allOpen` tracks the last bulk action;
+  // `seq` increments each click so modules re-apply even after manual toggles.
+  const [allOpen, setAllOpen] = useState(true);
   const [bulk, setBulk] = useState({ open: true, seq: 0 });
-  const expandAll = () => setBulk((b) => ({ open: true, seq: b.seq + 1 }));
-  const collapseAll = () => setBulk((b) => ({ open: false, seq: b.seq + 1 }));
+  const toggleAll = () => {
+    const next = !allOpen;
+    setAllOpen(next);
+    setBulk((b) => ({ open: next, seq: b.seq + 1 }));
+  };
 
   useEffect(() => {
     if (activeTopic) return; // TopicCard scrolls itself
@@ -67,11 +72,14 @@ export default function SubjectPage() {
       </header>
 
       <div className="bulk-controls">
-        <button type="button" className="bulk-btn" onClick={expandAll}>
-          Expand all
-        </button>
-        <button type="button" className="bulk-btn" onClick={collapseAll}>
-          Collapse all
+        <button
+          type="button"
+          className="bulk-btn"
+          onClick={toggleAll}
+          aria-label={allOpen ? 'Collapse all modules' : 'Expand all modules'}
+          title={allOpen ? 'Collapse all' : 'Expand all'}
+        >
+          {allOpen ? '−' : '+'}
         </button>
       </div>
 
