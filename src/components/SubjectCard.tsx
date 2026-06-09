@@ -28,7 +28,6 @@ export default function SubjectCard({ subject }: SubjectCardProps) {
       <span className="subject-card__icon">{subject.icon}</span>
       <span className="subject-card__code">{subject.code}</span>
       <h3 className="subject-card__title">{subject.title}</h3>
-      <p className="subject-card__summary">{subject.summary}</p>
       <div className="subject-card__meta">
         <span>
           <strong>{subject.modules.length}</strong> modules

@@ -158,8 +158,8 @@
 /* ---- Grids ---- */
 .subject-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--space-5);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
 }
 
 .module-list {
@@ -210,6 +210,11 @@
 
 @media (max-width: 600px) {
   .app-main {
-    padding: var(--space-5) var(--space-4);
+    padding: var(--space-4) var(--space-3);
+  }
+  /* Compact two-up dashboard cards on phones. */
+  .subject-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
   }
 }
