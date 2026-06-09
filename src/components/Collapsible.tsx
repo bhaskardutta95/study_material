@@ -25,8 +25,12 @@ export default function Collapsible({
   open: openProp,
   onOpenChange,
 }: CollapsibleProps) {
-  const [internalOpen, setInternalOpen] = useState(defaultOpen);
-  const isControlled = openProp !== undefined;
+  // Controlled only when the parent provides BOTH the value and a change
+  // handler. If `open` is passed without `onOpenChange`, fall back to
+  // uncontrolled (seeded from `open`) so the trigger still works instead of
+  // silently freezing.
+  const isControlled = openProp !== undefined && onOpenChange !== undefined;
+  const [internalOpen, setInternalOpen] = useState(openProp ?? defaultOpen);
   const open = isControlled ? openProp : internalOpen;
   const bodyId = useId();
 

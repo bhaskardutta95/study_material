@@ -1,8 +1,7 @@
-import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import type { Subject } from '../content/types';
 import { countTopics } from '../content';
-import { softColor } from '../utils/color';
+import { accentStyle } from '../utils/color';
 
 interface SubjectCardProps {
   subject: Subject;
@@ -13,16 +12,11 @@ interface SubjectCardProps {
  * links through to its page. Purely driven by data — no per-subject code.
  */
 export default function SubjectCard({ subject }: SubjectCardProps) {
-  const style = {
-    '--accent': subject.accent,
-    '--accent-soft': softColor(subject.accent),
-  } as CSSProperties;
-
   return (
     <Link
       to={`/subject/${subject.id}`}
       className="subject-card"
-      style={style}
+      style={accentStyle(subject.accent)}
       aria-label={`Open ${subject.title}`}
     >
       <span className="subject-card__icon">{subject.icon}</span>

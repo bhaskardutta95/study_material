@@ -1,49 +1,69 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import PageLayout from '../components/layout/PageLayout';
 import ModuleSection from '../components/ModuleSection';
 import { getSubject } from '../content';
+import { topicAnchor } from '../utils/anchors';
 
 /**
- * Subject page: module-wise sections, each holding collapsible topic cards.
- * The subject is resolved from the URL param against the registry.
+ * Subject page: module-wise sections of collapsible topic cards.
  *
- * URL drives navigation from the sidebar:
- *   ?t=<anchor>  → open + scroll to a topic   (handled in TopicCard)
- *   ?m=<id>      → scroll to a module section  (handled here)
- *   neither      → start at the top of the subject
+ * The page OWNS each module's open state (a single controller), so the
+ * Expand/Collapse-all toggle reflects reality and navigation can reliably open
+ * a target. `location.key` changes on every navigation — even re-clicking the
+ * same link — so re-selecting a topic/module re-reveals it.
+ *
+ *   ?t=<anchor>  → open the containing module; TopicCard opens + scrolls
+ *   ?m=<id>      → open + scroll to a module
+ *   neither      → start at the top
  */
 export default function SubjectPage() {
   const { subjectId } = useParams();
   const [params] = useSearchParams();
+  const location = useLocation();
   const activeTopic = params.get('t');
   const activeModule = params.get('m');
   const subject = getSubject(subjectId);
 
-  // One toggle controls every module. `allOpen` tracks the last bulk action;
-  // `seq` increments each click so modules re-apply even after manual toggles.
-  const [allOpen, setAllOpen] = useState(true);
-  const [bulk, setBulk] = useState({ open: true, seq: 0 });
-  const toggleAll = () => {
-    const next = !allOpen;
-    setAllOpen(next);
-    setBulk((b) => ({ open: next, seq: b.seq + 1 }));
+  // Open state per module id. Missing entry means "open" (the default).
+  const [openModules, setOpenModules] = useState<Record<string, boolean>>({});
+  const isModuleOpen = (id: string) => openModules[id] ?? true;
+  const setModuleOpen = (id: string, open: boolean) =>
+    setOpenModules((m) => ({ ...m, [id]: open }));
+  const setAllModules = (open: boolean) => {
+    if (!subject) return;
+    setOpenModules(Object.fromEntries(subject.modules.map((m) => [m.id, open])));
   };
+  const allOpen = subject ? subject.modules.every((m) => isModuleOpen(m.id)) : true;
 
+  // Module ids (m1..m9) repeat across subjects, so reset to defaults on switch.
   useEffect(() => {
-    if (activeTopic) return; // TopicCard scrolls itself
-    if (activeModule) {
-      const el = document.getElementById(activeModule);
-      if (el) {
-        const id = requestAnimationFrame(() =>
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-        );
-        return () => cancelAnimationFrame(id);
-      }
-      return;
+    setOpenModules({});
+  }, [subjectId]);
+
+  // Reveal the navigation target. Keyed on location.key so an identical-URL
+  // re-click (which leaves the search params unchanged) still re-fires.
+  useEffect(() => {
+    if (!subject) return;
+    if (activeTopic) {
+      const mod = subject.modules.find((m) =>
+        m.topics.some((t) => topicAnchor(m.id, t.id) === activeTopic),
+      );
+      if (mod) setModuleOpen(mod.id, true); // TopicCard handles its own scroll
+    } else if (activeModule) {
+      setModuleOpen(activeModule, true);
+      const raf = requestAnimationFrame(() =>
+        document
+          .getElementById(activeModule)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      );
+      return () => cancelAnimationFrame(raf);
+    } else {
+      window.scrollTo({ top: 0 });
     }
-    window.scrollTo({ top: 0 }); // plain subject navigation
-  }, [subjectId, activeTopic, activeModule]);
+    // location.key is the navigation signal; the rest are read fresh from it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.key]);
 
   if (!subject) {
     return (
@@ -75,7 +95,7 @@ export default function SubjectPage() {
         <button
           type="button"
           className="bulk-btn"
-          onClick={toggleAll}
+          onClick={() => setAllModules(!allOpen)}
           aria-label={allOpen ? 'Collapse all modules' : 'Expand all modules'}
           title={allOpen ? 'Collapse all' : 'Expand all'}
         >
@@ -89,9 +109,11 @@ export default function SubjectPage() {
             key={module.id}
             module={module}
             index={i + 1}
+            open={isModuleOpen(module.id)}
+            onToggle={() => setModuleOpen(module.id, !isModuleOpen(module.id))}
             activeTopicAnchor={activeTopic}
-            activeModuleId={activeModule}
-            bulk={bulk}
+            isActiveModule={activeModule === module.id}
+            navNonce={location.key}
           />
         ))}
       </div>

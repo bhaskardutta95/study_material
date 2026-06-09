@@ -1,8 +1,8 @@
-import { useState, type ReactNode, type CSSProperties } from 'react';
+import { useState, type ReactNode } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import SidebarNav from './SidebarNav';
-import { softColor } from '../../utils/color';
+import { accentStyle } from '../../utils/color';
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -19,9 +19,7 @@ export default function PageLayout({ children, accent }: PageLayoutProps) {
   // Mobile drawer state for the contents sidebar.
   const [navOpen, setNavOpen] = useState(false);
 
-  const style = accent
-    ? ({ '--accent': accent, '--accent-soft': softColor(accent) } as CSSProperties)
-    : undefined;
+  const style = accent ? accentStyle(accent) : undefined;
 
   return (
     <div className="app-shell" style={style}>

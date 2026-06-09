@@ -1,14 +1,14 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import type { Module, Subject } from '../../content/types';
 import { subjects } from '../../content';
 import { topicAnchor } from '../../utils/anchors';
-import { softColor } from '../../utils/color';
+import { accentStyle } from '../../utils/color';
 import {
   moduleMatches,
   normalize,
   subjectMatches,
-  topicMatches,
+  visibleTopics,
 } from '../../utils/search';
 
 interface SidebarNavProps {
@@ -19,11 +19,35 @@ interface SidebarNavProps {
 }
 
 /**
- * Hierarchical contents tree: Subject → Module → Topics.
- *
- * All nodes are collapsed by default. The search box filters the tree in place
- * (matching branches auto-expand). Clicking a topic routes to its subject page
- * with `?t=<anchor>`, which opens the matching card and scrolls to it.
+ * Shared open/close behaviour for a tree node. All nodes are collapsed by
+ * default. A node opens when navigation targets it (`hasActive`). While a
+ * filter is active, matching nodes open to reveal results but remain manually
+ * collapsible; clearing the filter returns the tree to its collapsed shape.
+ */
+function useTreeDisclosure(hasActive: boolean, filtering: boolean, matches: boolean) {
+  const [open, setOpen] = useState(false);
+  const wasFiltering = useRef(false);
+
+  useEffect(() => {
+    if (hasActive) setOpen(true);
+  }, [hasActive]);
+
+  useEffect(() => {
+    if (filtering) {
+      if (matches) setOpen(true);
+    } else if (wasFiltering.current) {
+      setOpen(false); // collapse only when a filter was just cleared
+    }
+    wasFiltering.current = filtering;
+  }, [filtering, matches]);
+
+  return [open, setOpen] as const;
+}
+
+/**
+ * Hierarchical contents tree: Subject → Module → Topics. Clicking a topic,
+ * module or subject navigates the page; the chevron only expands/collapses.
+ * The search box filters the tree in place.
  */
 export default function SidebarNav({ open, onNavigate }: SidebarNavProps) {
   const { subjectId } = useParams();
@@ -32,9 +56,10 @@ export default function SidebarNav({ open, onNavigate }: SidebarNavProps) {
   const [query, setQuery] = useState('');
 
   const filtering = normalize(query).length > 0;
-  const visibleSubjects = filtering
-    ? subjects.filter((s) => subjectMatches(s, query))
-    : subjects;
+  const visibleSubjects = useMemo(
+    () => (filtering ? subjects.filter((s) => subjectMatches(s, query)) : subjects),
+    [filtering, query],
+  );
 
   return (
     <>
@@ -103,33 +128,31 @@ function SideSubject({
       m.topics.some((t) => topicAnchor(m.id, t.id) === activeTopic),
     );
 
-  const [userOpen, setUserOpen] = useState(false);
+  const [open, setOpen] = useTreeDisclosure(
+    hasActiveTopic,
+    filtering,
+    subjectMatches(subject, query),
+  );
 
-  // Expand when this subject holds the active topic (navigation), not by default.
-  useEffect(() => {
-    if (hasActiveTopic) setUserOpen(true);
-  }, [hasActiveTopic]);
-
-  const open = filtering || userOpen;
-  const modules = filtering
-    ? subject.modules.filter((m) => moduleMatches(m, query))
-    : subject.modules;
-
-  // Each subject tints its own subtree with its accent colour.
-  const style = {
-    '--accent': subject.accent,
-    '--accent-soft': softColor(subject.accent),
-  } as CSSProperties;
+  // Pair each module with its real syllabus number BEFORE filtering, so the
+  // number stays correct and we avoid an indexOf scan per render.
+  const modules = useMemo(
+    () =>
+      subject.modules
+        .map((module, i) => ({ module, number: i + 1 }))
+        .filter(({ module }) => !filtering || moduleMatches(module, query)),
+    [subject, filtering, query],
+  );
 
   return (
-    <div className="sidetree__group" style={style}>
+    <div className="sidetree__group" style={accentStyle(subject.accent)}>
       <div className="sidetree__node sidetree__node--subject">
         <button
           type="button"
           className="sidetree__toggle"
           aria-label={open ? 'Collapse' : 'Expand'}
           aria-expanded={open}
-          onClick={() => setUserOpen((v) => !v)}
+          onClick={() => setOpen((v) => !v)}
         >
           <span className="sidetree__chevron" data-open={open} aria-hidden="true">
             ▶
@@ -140,7 +163,7 @@ function SideSubject({
           data-active={isActive}
           to={`/subject/${subject.id}`}
           onClick={() => {
-            setUserOpen(true);
+            setOpen(true);
             onNavigate();
           }}
         >
@@ -153,13 +176,12 @@ function SideSubject({
 
       {open && (
         <div className="sidetree__children">
-          {modules.map((module) => (
+          {modules.map(({ module, number }) => (
             <SideModule
               key={module.id}
               subjectId={subject.id}
               module={module}
-              // Real syllabus number, stable even when the list is filtered.
-              index={subject.modules.indexOf(module) + 1}
+              index={number}
               activeTopic={activeTopic}
               query={query}
               onNavigate={onNavigate}
@@ -193,24 +215,13 @@ function SideModule({
     (t) => topicAnchor(module.id, t.id) === activeTopic,
   );
 
-  const [userOpen, setUserOpen] = useState(false);
-  useEffect(() => {
-    if (hasActiveTopic) setUserOpen(true);
-  }, [hasActiveTopic]);
+  const [open, setOpen] = useTreeDisclosure(
+    hasActiveTopic,
+    filtering,
+    moduleMatches(module, query),
+  );
 
-  const open = filtering || userOpen;
-
-  // When filtering, show only matching topics — unless the module name itself
-  // matched, in which case show all of its topics.
-  const nameMatch = module.name.toLowerCase().includes(normalize(query));
-  const matched = module.topics.filter((t) => topicMatches(t, query));
-  const topics = !filtering
-    ? module.topics
-    : matched.length > 0
-      ? matched
-      : nameMatch
-        ? module.topics
-        : [];
+  const topics = useMemo(() => visibleTopics(module, query), [module, query]);
 
   return (
     <div className="sidetree__group">
@@ -220,7 +231,7 @@ function SideModule({
           className="sidetree__toggle"
           aria-label={open ? 'Collapse' : 'Expand'}
           aria-expanded={open}
-          onClick={() => setUserOpen((v) => !v)}
+          onClick={() => setOpen((v) => !v)}
         >
           <span className="sidetree__chevron" data-open={open} aria-hidden="true">
             ▶
@@ -230,7 +241,7 @@ function SideModule({
           className="sidetree__rowlink"
           to={`/subject/${subjectId}?m=${module.id}`}
           onClick={() => {
-            setUserOpen(true);
+            setOpen(true);
             onNavigate();
           }}
         >

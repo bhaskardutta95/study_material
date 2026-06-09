@@ -9,6 +9,8 @@ interface TopicCardProps {
   anchorId: string;
   /** True when the sidebar/URL points at this topic — opens and scrolls to it. */
   isActive?: boolean;
+  /** Changes on every navigation so re-selecting the same topic re-reveals it. */
+  navNonce?: string;
 }
 
 /**
@@ -18,10 +20,17 @@ interface TopicCardProps {
  * plus EITHER a code example (if present) OR a real-world example. When it
  * becomes the active navigation target it opens itself and scrolls into view.
  */
-export default function TopicCard({ topic, anchorId, isActive = false }: TopicCardProps) {
+export default function TopicCard({
+  topic,
+  anchorId,
+  isActive = false,
+  navNonce,
+}: TopicCardProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
+  // `navNonce` changes on every navigation, so re-selecting the same (already
+  // active) topic re-opens and re-scrolls instead of doing nothing.
   useEffect(() => {
     if (!isActive) return;
     setOpen(true);
@@ -30,7 +39,7 @@ export default function TopicCard({ topic, anchorId, isActive = false }: TopicCa
       ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     return () => cancelAnimationFrame(id);
-  }, [isActive]);
+  }, [isActive, navNonce]);
 
   return (
     <div id={anchorId} ref={ref} className="topic-anchor">

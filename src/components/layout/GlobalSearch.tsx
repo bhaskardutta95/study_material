@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchTopics, type TopicHit } from '../../utils/search';
 
@@ -13,7 +13,12 @@ export default function GlobalSearch() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const results = searchTopics(query, 8);
+  // Only scan the content tree while the dropdown is actually showing.
+  const showDropdown = open && query.trim().length > 0;
+  const results = useMemo(
+    () => (showDropdown ? searchTopics(query, 8) : []),
+    [showDropdown, query],
+  );
 
   // Close the dropdown when clicking outside the component.
   useEffect(() => {
@@ -34,6 +39,11 @@ export default function GlobalSearch() {
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
+    // Don't act on Enter/arrows when no dropdown is visible.
+    if (!showDropdown) {
+      if (e.key === 'Escape') setOpen(false);
+      return;
+    }
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setActive((i) => Math.min(i + 1, results.length - 1));
@@ -46,8 +56,6 @@ export default function GlobalSearch() {
       setOpen(false);
     }
   }
-
-  const showDropdown = open && query.trim().length > 0;
 
   return (
     <div className="gsearch" ref={wrapRef}>

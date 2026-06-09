@@ -49,6 +49,19 @@ export function subjectMatches(subject: Subject, query: string): boolean {
 }
 
 /**
+ * Topics of a module to show under the current query: all of them when not
+ * filtering or when the module name itself matched; otherwise only the topics
+ * that match. Single source of truth for the sidebar's filtered tree.
+ */
+export function visibleTopics(module: Module, query: string): Topic[] {
+  const q = normalize(query);
+  if (!q) return module.topics;
+  const matched = module.topics.filter((t) => topicMatches(t, q));
+  if (matched.length > 0) return matched;
+  return module.name.toLowerCase().includes(q) ? module.topics : [];
+}
+
+/**
  * Flat, ranked list of topics across ALL subjects for the global search.
  * Name matches rank above description-only matches; result is capped.
  */

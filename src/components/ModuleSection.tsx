@@ -7,15 +7,16 @@ interface ModuleSectionProps {
   module: Module;
   /** 1-based position, shown as the module index badge. */
   index: number;
+  /** Whether the module is expanded (controlled by the page). */
+  open: boolean;
+  /** Toggle handler from the page controller. */
+  onToggle: () => void;
   /** Anchor of the topic the URL currently points at (from `?t=`), if any. */
   activeTopicAnchor?: string | null;
-  /** Id of the module the URL points at (from `?m=`) — flashes its heading. */
-  activeModuleId?: string | null;
-  /**
-   * Bulk open/collapse command from the page toolbar. `seq` increments on each
-   * click so the same command re-applies; `seq === 0` means "no command yet".
-   */
-  bulk?: { open: boolean; seq: number };
+  /** True when the URL points at this module (from `?m=`) — flashes its heading. */
+  isActiveModule?: boolean;
+  /** Changes on every navigation so re-selecting the same target re-triggers. */
+  navNonce?: string;
 }
 
 const IMPORTANCE_LABEL: Record<string, string> = {
@@ -28,44 +29,29 @@ const FLASH_MS = 1800;
 
 /**
  * Renders one module: a collapsible heading (index + name + importance badge)
- * that shows/hides its topic cards. Module-wise separation of the subject page
- * lives here. Modules are open by default; they auto-open and flash when the
- * sidebar navigates to the module or one of its topics.
+ * that shows/hides its topic cards. Open state is owned by the page so a single
+ * controller can drive Expand/Collapse-all and navigation honestly. The heading
+ * flashes when the sidebar navigates to this module (re-firing on every click).
  */
 export default function ModuleSection({
   module,
   index,
+  open,
+  onToggle,
   activeTopicAnchor,
-  activeModuleId,
-  bulk,
+  isActiveModule = false,
+  navNonce,
 }: ModuleSectionProps) {
   const importance = module.importance ?? 'normal';
-  const isActiveModule = activeModuleId === module.id;
-  const containsActiveTopic =
-    !!activeTopicAnchor &&
-    module.topics.some((t) => topicAnchor(module.id, t.id) === activeTopicAnchor);
-
-  const [open, setOpen] = useState(true);
-  const [flash, setFlash] = useState(false);
-
-  // Make sure the module is open when navigation targets it or a topic inside it.
-  useEffect(() => {
-    if (isActiveModule || containsActiveTopic) setOpen(true);
-  }, [isActiveModule, containsActiveTopic]);
-
-  // Apply Expand all / Collapse all from the page toolbar.
-  useEffect(() => {
-    if (!bulk || bulk.seq === 0) return;
-    setOpen(bulk.open);
-  }, [bulk?.seq, bulk?.open]);
 
   // Transient highlight that fades out shortly after arrival.
+  const [flash, setFlash] = useState(false);
   useEffect(() => {
     if (!isActiveModule) return;
     setFlash(true);
     const t = setTimeout(() => setFlash(false), FLASH_MS);
     return () => clearTimeout(t);
-  }, [isActiveModule]);
+  }, [isActiveModule, navNonce]);
 
   return (
     <section className="module" id={module.id}>
@@ -75,7 +61,7 @@ export default function ModuleSection({
           className="module__head"
           data-flash={flash}
           aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
+          onClick={onToggle}
         >
           <span className="module__chevron" data-open={open} aria-hidden="true">
             ▶
@@ -98,6 +84,7 @@ export default function ModuleSection({
                 topic={topic}
                 anchorId={anchor}
                 isActive={anchor === activeTopicAnchor}
+                navNonce={navNonce}
               />
             );
           })}
