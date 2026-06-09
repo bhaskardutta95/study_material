@@ -81,7 +81,31 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  /* Padding + matching negative inline margin gives the flash a band to fill
+     without shifting the heading relative to the topic cards below. */
+  padding: var(--space-2) var(--space-3);
+  margin: 0 calc(-1 * var(--space-3)) var(--space-4);
+  border-radius: var(--radius-md);
+}
+
+@keyframes module-flash {
+  0%,
+  20% {
+    background-color: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: inset 3px 0 0 transparent;
+  }
+}
+.module__head[data-flash='true'] {
+  animation: module-flash var(--flash-duration, 1.8s) ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .module__head[data-flash='true'] {
+    animation: none;
+  }
 }
 
 .module__index {

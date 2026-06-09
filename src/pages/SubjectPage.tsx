@@ -68,6 +68,7 @@ export default function SubjectPage() {
             module={module}
             index={i + 1}
             activeTopicAnchor={activeTopic}
+            activeModuleId={activeModule}
           />
         ))}
       </div>
