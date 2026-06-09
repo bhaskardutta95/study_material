@@ -7,6 +7,8 @@ example or a real-world example.
 
 Built with **Vite + React + TypeScript**. No backend. Deploys to **GitHub Pages**.
 
+**🔗 Live site: https://bhaskardutta95.github.io/study_material/**
+
 ## Tech & design choices
 
 - **Vite + React + TS** — lightest static SPA; builds to a plain `dist/` folder.
