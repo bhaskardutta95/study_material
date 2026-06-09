@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import PageLayout from '../components/layout/PageLayout';
 import ModuleSection from '../components/ModuleSection';
@@ -19,6 +19,11 @@ export default function SubjectPage() {
   const activeTopic = params.get('t');
   const activeModule = params.get('m');
   const subject = getSubject(subjectId);
+
+  // Bulk expand/collapse command broadcast to every module (seq forces re-apply).
+  const [bulk, setBulk] = useState({ open: true, seq: 0 });
+  const expandAll = () => setBulk((b) => ({ open: true, seq: b.seq + 1 }));
+  const collapseAll = () => setBulk((b) => ({ open: false, seq: b.seq + 1 }));
 
   useEffect(() => {
     if (activeTopic) return; // TopicCard scrolls itself
@@ -61,6 +66,15 @@ export default function SubjectPage() {
         <p className="page-head__subtitle">{subject.summary}</p>
       </header>
 
+      <div className="bulk-controls">
+        <button type="button" className="bulk-btn" onClick={expandAll}>
+          Expand all
+        </button>
+        <button type="button" className="bulk-btn" onClick={collapseAll}>
+          Collapse all
+        </button>
+      </div>
+
       <div className="module-list">
         {subject.modules.map((module, i) => (
           <ModuleSection
@@ -69,6 +83,7 @@ export default function SubjectPage() {
             index={i + 1}
             activeTopicAnchor={activeTopic}
             activeModuleId={activeModule}
+            bulk={bulk}
           />
         ))}
       </div>

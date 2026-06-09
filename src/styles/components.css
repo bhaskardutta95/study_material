@@ -93,20 +93,65 @@
   }
 }
 
+/* ---- Bulk expand/collapse toolbar ---- */
+.bulk-controls {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+.bulk-btn {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.bulk-btn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border-color: var(--accent);
+}
+
 /* ---- Module section ---- */
 .module {
   scroll-margin-top: calc(var(--header-h) + var(--space-4));
 }
 
+.module__heading {
+  /* Wrapper kept as a real <h2> for accessibility; no visual styling. */
+  margin: 0;
+}
+
 .module__head {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  text-align: left;
+  cursor: pointer;
   /* Padding + matching negative inline margin gives the flash a band to fill
      without shifting the heading relative to the topic cards below. */
   padding: var(--space-2) var(--space-3);
   margin: 0 calc(-1 * var(--space-3)) var(--space-4);
   border-radius: var(--radius-md);
+  transition: background 0.15s;
+}
+.module__head:hover {
+  background: var(--color-surface-2);
+}
+
+.module__chevron {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: var(--color-text-faint);
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+.module__chevron[data-open='true'] {
+  transform: rotate(90deg);
+  color: var(--accent);
 }
 
 @keyframes module-flash {
@@ -143,7 +188,10 @@
 }
 
 .module__name {
+  flex: 1;
+  min-width: 0;
   font-size: 1.25rem;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
